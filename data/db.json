@@ -219,6 +219,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T11:56:42.793Z"
+    },
+    {
+      "id": "bb895044-6445-46f6-9750-cdcdd187db4f",
+      "recipientId": "marcelo",
+      "meritKey": "resolvedor_de_producao",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T12:00:19.377Z"
     }
   ]
 }
