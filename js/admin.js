@@ -9,6 +9,19 @@ const AdminPage = (() => {
 
   // ─── Utilitários compartilhados ───────────────────────────
 
+  // Deriva cor de fundo escura a partir da cor de destaque (borderColor)
+  const deriveBgFromBorder = (hex) => {
+    if (!hex || hex.length < 7) return "#0d1117";
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    // Fundo: versão muito escura (~5% da cor original)
+    const dr = Math.round(r * 0.07).toString(16).padStart(2, "0");
+    const dg = Math.round(g * 0.07).toString(16).padStart(2, "0");
+    const db = Math.round(b * 0.07).toString(16).padStart(2, "0");
+    return `#${dr}${dg}${db}`;
+  };
+
   const generateUUID = () =>
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0;
@@ -101,6 +114,81 @@ const AdminPage = (() => {
       ).join("");
   };
 
+  const renderMeritPicker = (containerId, hiddenInputId) => {
+    const container = document.getElementById(containerId);
+    const hidden    = document.getElementById(hiddenInputId);
+    if (!container || !hidden) return;
+
+    const merits = getAllMeritsConfig();
+    let selected  = null;
+
+    const renderTrigger = () => {
+      if (selected) {
+        return `
+          <button type="button" class="merit-trigger merit-trigger--selected" id="merit-trigger" aria-haspopup="true" aria-expanded="false">
+            <span class="merit-trigger__badge">${BadgeGenerator.render(selected, { size: 56, showLabel: false })}</span>
+            <span class="merit-trigger__info">
+              <span class="merit-trigger__name">${selected.title}</span>
+              <span class="merit-trigger__sub">${selected.description}</span>
+            </span>
+            <span class="merit-trigger__arrow" aria-hidden="true">›</span>
+          </button>`;
+      }
+      return `
+        <button type="button" class="merit-trigger" id="merit-trigger" aria-haspopup="true" aria-expanded="false">
+          <span class="merit-trigger__placeholder">Selecione um mérito...</span>
+          <span class="merit-trigger__arrow" aria-hidden="true">›</span>
+        </button>`;
+    };
+
+    const renderDropdown = () => `
+      <div class="merit-picker-dropdown" id="merit-picker-dropdown">
+        <div class="merit-picker-grid">
+          ${merits.map((mc) => `
+            <button type="button" class="merit-picker-item ${selected?.key === mc.key ? "merit-picker-item--selected" : ""}"
+                    data-key="${mc.key}" title="${mc.title}">
+              ${BadgeGenerator.render(mc, { size: 72, showLabel: false })}
+              <span class="merit-picker-item__label">${mc.title}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>`;
+
+    const rebuild = () => {
+      container.innerHTML = renderTrigger();
+      const trigger = container.querySelector("#merit-trigger");
+      trigger.addEventListener("click", () => {
+        const open = !container.querySelector("#merit-picker-dropdown");
+        if (open) {
+          container.insertAdjacentHTML("beforeend", renderDropdown());
+          trigger.setAttribute("aria-expanded", "true");
+          container.querySelectorAll(".merit-picker-item").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              selected = merits.find((m) => m.key === btn.dataset.key) ?? null;
+              hidden.value = selected?.key ?? "";
+              rebuild();
+            });
+          });
+          // Fecha ao clicar fora
+          setTimeout(() => {
+            document.addEventListener("click", function onOut(e) {
+              if (!container.contains(e.target)) {
+                container.querySelector("#merit-picker-dropdown")?.remove();
+                trigger.setAttribute("aria-expanded", "false");
+                document.removeEventListener("click", onOut);
+              }
+            });
+          }, 0);
+        } else {
+          container.querySelector("#merit-picker-dropdown")?.remove();
+          trigger.setAttribute("aria-expanded", "false");
+        }
+      });
+    };
+
+    rebuild();
+  };
+
   // ─── Emoji Picker ─────────────────────────────────────────
 
   const EMOJI_GROUPS = [
@@ -180,10 +268,10 @@ const AdminPage = (() => {
       title:       document.getElementById("new-merit-name")?.value   || "Novo Mérito",
       description: document.getElementById("new-merit-desc")?.value   || "",
       badge: {
-        backgroundColor: document.getElementById("new-merit-bg")?.value     ?? "#0d1117",
+        backgroundColor: deriveBgFromBorder(document.getElementById("new-merit-border")?.value ?? "#39d353"),
         borderColor:     document.getElementById("new-merit-border")?.value ?? "#39d353",
-        textColor:       document.getElementById("new-merit-text")?.value   ?? "#e6edf3",
-        shape:           document.getElementById("new-merit-shape")?.value  ?? "hexagon",
+        textColor:       "#e6edf3",
+        shape:           "hexagon",
       }
     };
     previewContainer.innerHTML = BadgeGenerator.render(meritConfig, { size: 140 });
@@ -306,7 +394,7 @@ const AdminPage = (() => {
     showPage();
 
     populateMemberSelect("grant-member");
-    populateMeritSelect("grant-merit");
+    renderMeritPicker("merit-picker", "grant-merit");
 
     const currentUser = Auth.getCurrentUser();
     const giverDisplay = document.getElementById("grant-giver-display");
@@ -315,20 +403,6 @@ const AdminPage = (() => {
         <span class="giver-display__avatar">${currentUser.avatar}</span>
         <span class="giver-display__name">${currentUser.name}</span>`;
     }
-
-    // Preview do badge ao selecionar mérito
-    const meritSelect = document.getElementById("grant-merit");
-    const previewWrap = document.getElementById("merit-preview-wrap");
-    const previewBadge = document.getElementById("merit-preview-badge");
-    const previewInfo  = document.getElementById("merit-preview-info");
-
-    meritSelect?.addEventListener("change", () => {
-      const mc = findMeritConfig(meritSelect.value);
-      if (!mc || !previewWrap) return;
-      previewWrap.hidden = false;
-      previewBadge.innerHTML = BadgeGenerator.render(mc, { size: 80 });
-      previewInfo.innerHTML  = `<strong>${mc.title}</strong><br><span class="text-muted">${mc.description}</span>`;
-    });
 
     const form = document.getElementById("grant-form");
     if (!form) return;
@@ -390,8 +464,16 @@ const AdminPage = (() => {
     updateBadgePreview();
     initEmojiPicker();
 
-    ["new-merit-name","new-merit-desc","new-merit-bg","new-merit-border","new-merit-text","new-merit-shape"]
+    ["new-merit-name","new-merit-desc","new-merit-border"]
       .forEach((id) => document.getElementById(id)?.addEventListener("input", debouncedPreview));
+
+    // Color presets
+    document.querySelectorAll(".color-preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const colorInput = document.getElementById("new-merit-border");
+        if (colorInput) { colorInput.value = btn.dataset.color; debouncedPreview(); }
+      });
+    });
 
     const form = document.getElementById("create-merit-form");
     if (!form) return;
@@ -404,10 +486,10 @@ const AdminPage = (() => {
       const name        = sanitizeText(document.getElementById("new-merit-name").value);
       const description = sanitizeText(document.getElementById("new-merit-desc").value);
       const emoji       = sanitizeText(document.getElementById("new-merit-emoji").value);
-      const bgColor     = document.getElementById("new-merit-bg").value;
       const borderColor = document.getElementById("new-merit-border").value;
-      const textColor   = document.getElementById("new-merit-text").value;
-      const shape       = document.getElementById("new-merit-shape").value;
+      const bgColor     = deriveBgFromBorder(borderColor);
+      const textColor   = "#e6edf3";
+      const shape       = "hexagon";
 
       if (!name || !description || !emoji) {
         showStatus("create-status", "Preencha todos os campos obrigatórios.", "error");

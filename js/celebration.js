@@ -117,7 +117,7 @@ const Celebration = (() => {
     if (existing) existing.remove();
 
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)];
-    const badgeSvg = BadgeGenerator.render(meritConfig, { size: 140 });
+    const accent = meritConfig.badge?.borderColor || "#39d353";
 
     const modal = document.createElement("div");
     modal.id = "celebration-modal";
@@ -127,8 +127,10 @@ const Celebration = (() => {
     modal.innerHTML = `
       <div class="celebration-backdrop"></div>
       <div class="celebration-content">
-        <div class="celebration-badge">${badgeSvg}</div>
-        <h2 class="celebration-title">${meritConfig.emoji} ${meritConfig.title}</h2>
+        <div class="celebration-badge-icon" style="--accent:${accent}">
+          <span class="celebration-badge-emoji">${meritConfig.emoji}</span>
+        </div>
+        <h2 class="celebration-title">${meritConfig.title}</h2>
         <p class="celebration-recipient">🎉 Parabéns, <strong>${recipientName}</strong>!</p>
         <p class="celebration-phrase">${phrase}</p>
         <button class="celebration-close btn btn--primary" aria-label="Fechar celebração">Fechar</button>

@@ -107,33 +107,23 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="new-merit-bg" class="form-label">Cor de fundo</label>
-              <input type="color" id="new-merit-bg" name="bg" class="form-color" value="#0d1117" />
-            </div>
-            <div class="form-group">
-              <label for="new-merit-border" class="form-label">Cor da borda</label>
-              <input type="color" id="new-merit-border" name="border" class="form-color" value="#39d353" />
-            </div>
-            <div class="form-group">
-              <label for="new-merit-text" class="form-label">Cor do texto</label>
-              <input type="color" id="new-merit-text" name="text" class="form-color" value="#e6edf3" />
-            </div>
-          </div>
-
           <div class="form-group">
-            <label for="new-merit-shape" class="form-label">Formato do badge</label>
-            <select id="new-merit-shape" name="shape" class="form-select">
-              <option value="hexagon">⬡ Hexágono</option>
-              <option value="pentagon">⬠ Pentágono</option>
-              <option value="shield">🛡 Escudo</option>
-              <option value="circle">⬤ Círculo</option>
-              <option value="scroll">⬭ Oval</option>
-              <option value="diamond">◆ Diamante</option>
-              <option value="star5">★ Estrela 5 pontas</option>
-              <option value="star8">✸ Burst 8 pontas</option>
-            </select>
+            <label for="new-merit-border" class="form-label">Cor de destaque
+              <span class="form-label__hint">define a cor da borda e do título do card</span>
+            </label>
+            <div class="color-picker-row">
+              <input type="color" id="new-merit-border" name="border" class="form-color" value="#39d353" />
+              <div class="color-presets">
+                <button type="button" class="color-preset" data-color="#39d353" style="background:#39d353" title="Verde"></button>
+                <button type="button" class="color-preset" data-color="#4f8bff" style="background:#4f8bff" title="Azul"></button>
+                <button type="button" class="color-preset" data-color="#ff2d78" style="background:#ff2d78" title="Rosa"></button>
+                <button type="button" class="color-preset" data-color="#ff6b35" style="background:#ff6b35" title="Laranja"></button>
+                <button type="button" class="color-preset" data-color="#bd93f9" style="background:#bd93f9" title="Roxo"></button>
+                <button type="button" class="color-preset" data-color="#00ffcc" style="background:#00ffcc" title="Ciano"></button>
+                <button type="button" class="color-preset" data-color="#fbbf24" style="background:#fbbf24" title="Ouro"></button>
+                <button type="button" class="color-preset" data-color="#f43f8e" style="background:#f43f8e" title="Pink"></button>
+              </div>
+            </div>
           </div>
 
           <div id="create-status" class="status-message" hidden aria-live="polite"></div>

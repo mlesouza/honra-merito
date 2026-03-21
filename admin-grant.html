@@ -57,16 +57,9 @@
         </div>
 
         <div class="form-group">
-          <label for="grant-merit" class="form-label">Qual mérito? <span class="required" aria-hidden="true">*</span></label>
-          <select id="grant-merit" name="merit" class="form-select" required aria-required="true">
-            <option value="">Selecione um mérito...</option>
-          </select>
-        </div>
-
-        <!-- Preview do badge selecionado -->
-        <div id="merit-preview-wrap" class="merit-select-preview" hidden>
-          <div id="merit-preview-badge"></div>
-          <div id="merit-preview-info"></div>
+          <label class="form-label">Qual mérito? <span class="required" aria-hidden="true">*</span></label>
+          <input type="hidden" id="grant-merit" name="merit" required />
+          <div id="merit-picker" class="merit-picker"></div>
         </div>
 
         <div class="form-group">

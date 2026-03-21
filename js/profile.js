@@ -132,6 +132,49 @@ const ProfilePage = (() => {
     }
   };
 
+  // Modal de detalhe do badge
+  const showBadgeModal = (mc, count) => {
+    const existing = document.getElementById("badge-detail-modal");
+    if (existing) existing.remove();
+
+    const locked = count === 0;
+    const accent = mc.badge?.borderColor || "#39d353";
+    const displayEmoji = locked ? "🔒" : mc.emoji;
+    const statusText = locked
+      ? '<span class="badge-modal__status badge-modal__status--locked">🔒 Ainda não conquistado</span>'
+      : `<span class="badge-modal__status badge-modal__status--earned">✓ Conquistado ×${count}</span>`;
+
+    const modal = document.createElement("div");
+    modal.id = "badge-detail-modal";
+    modal.className = "badge-modal-overlay";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-label", mc.title);
+    modal.innerHTML = `
+      <div class="badge-modal">
+        <button class="badge-modal__close" aria-label="Fechar">✕</button>
+        <div class="badge-modal__icon" style="--accent:${accent}">
+          <span class="badge-modal__emoji">${displayEmoji}</span>
+        </div>
+        <div class="badge-modal__body">
+          <h2 class="badge-modal__title">${mc.title}</h2>
+          ${statusText}
+          <p class="badge-modal__desc">${mc.description || ""}</p>
+        </div>
+      </div>
+    `;
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal || e.target.closest(".badge-modal__close")) modal.remove();
+    });
+    document.addEventListener("keydown", function onKey(e) {
+      if (e.key === "Escape") { modal.remove(); document.removeEventListener("keydown", onKey); }
+    });
+
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => modal.classList.add("badge-modal-overlay--visible"));
+  };
+
   // Renderiza a vitrine de badges (desbloqueados e bloqueados)
   const renderBadgeShowcase = (memberMerits, allMeritsConfig) => {
     const container = document.getElementById("badge-showcase");
@@ -145,15 +188,25 @@ const ProfilePage = (() => {
     container.innerHTML = allMeritsConfig.map((mc) => {
       const count = meritCounts[mc.key] ?? 0;
       const locked = count === 0;
-      const badgeSvg = BadgeGenerator.render(mc, { size: 90, locked, count });
+      const badgeSvg = BadgeGenerator.render(mc, { size: 130, locked, count });
 
       return `
         <div class="badge-showcase-item ${locked ? "badge-showcase-item--locked" : ""}"
-             title="${mc.title}: ${mc.description}${locked ? " (ainda não conquistado)" : ` (×${count})`}">
+             role="button" tabindex="0" aria-label="${mc.title}"
+             data-merit-key="${mc.key}">
           ${badgeSvg}
         </div>
       `;
     }).join("");
+
+    container.querySelectorAll(".badge-showcase-item").forEach((el) => {
+      const key = el.dataset.meritKey;
+      const mc = allMeritsConfig.find((m) => m.key === key);
+      if (!mc) return;
+      const count = meritCounts[key] ?? 0;
+      el.addEventListener("click", () => showBadgeModal(mc, count));
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") showBadgeModal(mc, count); });
+    });
   };
 
   // Renderiza o histórico completo de méritos recebidos
