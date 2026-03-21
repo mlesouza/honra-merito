@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏆 Honra ao Mérito</title>
+  <meta name="description" content="Sistema de conquistas e méritos engraçados para equipes de desenvolvimento." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-header__title">🏆 Honra ao Mérito</h1>
+      <p class="site-header__subtitle">Conquistas imortalizadas da equipe de dev</p>
+    </div>
+  </header>
+
+  <main class="container" id="main-content">
+
+    <!-- Estado de carregamento -->
+    <div id="loading-state" class="loading-state" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Carregando dados...</span>
+    </div>
+
+    <!-- Mensagem de erro global -->
+    <div id="error-state" class="error-banner" hidden role="alert"></div>
+
+    <!-- Seção Ranking -->
+    <section class="section" aria-labelledby="ranking-heading">
+      <h2 class="section__title" id="ranking-heading">
+        <span aria-hidden="true">🥇</span> Ranking da Equipe
+      </h2>
+      <div id="ranking-list" class="ranking-grid" aria-label="Ranking de membros por méritos">
+        <!-- Renderizado via app.js -->
+      </div>
+    </section>
+
+    <!-- Seção Feed -->
+    <section class="section" aria-labelledby="feed-heading">
+      <h2 class="section__title" id="feed-heading">
+        <span aria-hidden="true">📜</span> Últimas Conquistas
+      </h2>
+      <div id="feed-list" class="feed-list" aria-label="Feed de méritos concedidos">
+        <!-- Renderizado via app.js -->
+      </div>
+      <div class="feed-actions">
+        <button id="feed-load-more" class="btn btn--secondary" hidden aria-label="Carregar mais méritos">
+          Carregar mais
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Botão flutuante para dar mérito -->
+  <a href="admin.html" class="fab" aria-label="Dar um mérito para alguém">
+    <span aria-hidden="true">+</span> Dar Mérito
+  </a>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Honra ao Mérito — porque todo dev merece ser lembrado pelas suas façanhas</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

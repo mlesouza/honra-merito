@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil — Honra ao Mérito</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
+        <span class="breadcrumb__sep" aria-hidden="true">/</span>
+        <span class="breadcrumb__current">Perfil</span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Estado de carregamento -->
+    <div id="loading-state" class="loading-state" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Carregando perfil...</span>
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div id="error-state" class="error-banner" hidden role="alert"></div>
+
+    <!-- Conteúdo do perfil -->
+    <div id="profile-content" hidden>
+
+      <!-- Cabeçalho do perfil -->
+      <section class="profile-header" aria-label="Informações do membro">
+        <div class="profile-header__avatar" id="profile-avatar" aria-hidden="true">🧑‍💻</div>
+        <div class="profile-header__info">
+          <h1 class="profile-header__name" id="profile-name">Carregando...</h1>
+          <p class="profile-header__total" id="profile-total">0 méritos</p>
+        </div>
+      </section>
+
+      <!-- Vitrine de badges -->
+      <section class="section" aria-labelledby="showcase-heading">
+        <h2 class="section__title" id="showcase-heading">
+          <span aria-hidden="true">🎖️</span> Conquistas
+        </h2>
+        <p class="section__subtitle">Badges desbloqueados e ainda por conquistar</p>
+        <div id="badge-showcase" class="badge-showcase" aria-label="Vitrine de badges do membro">
+          <!-- Renderizado via profile.js -->
+        </div>
+      </section>
+
+      <!-- Histórico completo -->
+      <section class="section" aria-labelledby="history-heading">
+        <h2 class="section__title" id="history-heading">
+          <span aria-hidden="true">📋</span> Histórico de Méritos
+        </h2>
+        <div id="merit-history" class="merit-history" aria-label="Histórico completo de méritos">
+          <!-- Renderizado via profile.js -->
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <a href="index.html" class="footer-link">← Voltar ao ranking</a>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

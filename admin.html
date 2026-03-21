@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Honra ao Mérito</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
+        <span class="breadcrumb__sep" aria-hidden="true">/</span>
+        <span class="breadcrumb__current">Admin</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Overlay de autenticação (bloqueia o conteúdo) -->
+  <div id="auth-overlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="auth-box">
+      <h2 class="auth-box__title" id="auth-title">🔐 Área Restrita</h2>
+      <p class="auth-box__subtitle">Digite a senha da equipe para acessar o painel de admin.</p>
+      <form id="auth-form" class="auth-form" novalidate>
+        <div class="form-group">
+          <label for="auth-password" class="form-label">Senha da equipe</label>
+          <input
+            type="password"
+            id="auth-password"
+            name="password"
+            class="form-input"
+            placeholder="Digite a senha..."
+            autocomplete="current-password"
+            required
+            aria-describedby="auth-error"
+          />
+        </div>
+        <div id="auth-error" class="error-message" hidden role="alert" aria-live="assertive"></div>
+        <button type="submit" class="btn btn--primary btn--full">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Conteúdo protegido -->
+  <main class="container" id="admin-content" hidden>
+
+    <div class="admin-header">
+      <h1 class="admin-header__title">⚙️ Painel de Admin</h1>
+    </div>
+
+    <!-- Navegação por abas -->
+    <div class="tabs" role="tablist" aria-label="Seções do admin">
+      <button
+        class="tab-btn tab-btn--active"
+        role="tab"
+        data-tab="grant"
+        aria-selected="true"
+        aria-controls="tab-grant"
+        id="tab-btn-grant"
+      >🏅 Conceder Mérito</button>
+      <button
+        class="tab-btn"
+        role="tab"
+        data-tab="create"
+        aria-selected="false"
+        aria-controls="tab-create"
+        id="tab-btn-create"
+      >✨ Criar Mérito</button>
+      <button
+        class="tab-btn"
+        role="tab"
+        data-tab="manage"
+        aria-selected="false"
+        aria-controls="tab-manage"
+        id="tab-btn-manage"
+      >🗂️ Gerenciar</button>
+    </div>
+
+    <!-- Aba 1: Conceder Mérito -->
+    <div id="tab-grant" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-grant">
+      <div class="card">
+        <h2 class="card__title">Conceder Mérito</h2>
+        <form id="grant-form" novalidate>
+
+          <div class="form-group">
+            <label for="grant-member" class="form-label">Quem está recebendo? <span class="required" aria-hidden="true">*</span></label>
+            <select id="grant-member" name="member" class="form-select" required aria-required="true">
+              <option value="">Selecione um membro...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="grant-merit" class="form-label">Qual mérito? <span class="required" aria-hidden="true">*</span></label>
+            <select id="grant-merit" name="merit" class="form-select" required aria-required="true">
+              <option value="">Selecione um mérito...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="grant-reason" class="form-label">Motivo / comentário <span class="text-muted">(opcional)</span></label>
+            <input
+              type="text"
+              id="grant-reason"
+              name="reason"
+              class="form-input"
+              placeholder="Ex: Mandou link do PR dizendo que estava funcionando..."
+              maxlength="300"
+              aria-describedby="grant-reason-hint"
+            />
+            <span id="grant-reason-hint" class="form-hint">Máximo 300 caracteres</span>
+          </div>
+
+          <div class="form-group">
+            <label for="grant-giver" class="form-label">Seu nome (quem está dando) <span class="required" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="grant-giver"
+              name="giver"
+              class="form-input"
+              placeholder="Digite seu nome..."
+              maxlength="100"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div id="grant-status" class="status-message" hidden aria-live="polite"></div>
+
+          <button type="submit" class="btn btn--primary" aria-label="Conceder o mérito selecionado">
+            Conceder Mérito 🏅
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Aba 2: Criar Novo Mérito -->
+    <div id="tab-create" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-create" hidden>
+      <div class="create-merit-layout">
+
+        <!-- Formulário -->
+        <div class="card">
+          <h2 class="card__title">Criar Novo Mérito</h2>
+          <form id="create-merit-form" novalidate>
+
+            <div class="form-group">
+              <label for="new-merit-name" class="form-label">Nome do mérito <span class="required" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                id="new-merit-name"
+                name="name"
+                class="form-input"
+                placeholder="Ex: Debugger das Trevas"
+                maxlength="60"
+                required
+                aria-required="true"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="new-merit-desc" class="form-label">Descrição <span class="required" aria-hidden="true">*</span></label>
+              <textarea
+                id="new-merit-desc"
+                name="description"
+                class="form-textarea"
+                placeholder="Ex: Passa mais tempo no debugger do que no editor..."
+                maxlength="200"
+                rows="3"
+                required
+                aria-required="true"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="new-merit-emoji" class="form-label">Emoji <span class="required" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                id="new-merit-emoji"
+                name="emoji"
+                class="form-input form-input--emoji"
+                placeholder="🏅"
+                maxlength="4"
+                required
+                aria-required="true"
+              />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-merit-bg" class="form-label">Cor de fundo</label>
+                <input type="color" id="new-merit-bg" name="bg" class="form-color" value="#0d1117" />
+              </div>
+              <div class="form-group">
+                <label for="new-merit-border" class="form-label">Cor da borda</label>
+                <input type="color" id="new-merit-border" name="border" class="form-color" value="#39d353" />
+              </div>
+              <div class="form-group">
+                <label for="new-merit-text" class="form-label">Cor do texto</label>
+                <input type="color" id="new-merit-text" name="text" class="form-color" value="#e6edf3" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="new-merit-shape" class="form-label">Formato do badge</label>
+              <select id="new-merit-shape" name="shape" class="form-select">
+                <option value="hexagon">Hexágono</option>
+                <option value="shield">Escudo</option>
+                <option value="circle">Círculo</option>
+                <option value="star">Estrela</option>
+              </select>
+            </div>
+
+            <div id="create-status" class="status-message" hidden aria-live="polite"></div>
+
+            <button type="submit" class="btn btn--primary" aria-label="Criar o novo mérito customizado">
+              Criar Mérito ✨
+            </button>
+          </form>
+        </div>
+
+        <!-- Preview ao vivo -->
+        <div class="badge-preview-panel" aria-live="polite" aria-label="Prévia do badge em tempo real">
+          <h3 class="badge-preview-panel__title">Prévia do Badge</h3>
+          <div id="badge-preview" class="badge-preview-container">
+            <!-- Atualizado via admin.js com debounce -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Aba 3: Gerenciar -->
+    <div id="tab-manage" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-manage" hidden>
+
+      <div class="card">
+        <h2 class="card__title">Últimos Méritos Concedidos</h2>
+        <p class="card__subtitle">Use o botão "Remover" para corrigir erros. Os últimos 30 méritos são exibidos.</p>
+        <div id="recent-merits-list" class="manage-list" aria-label="Lista de méritos recentes">
+          <!-- Renderizado via admin.js -->
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: var(--space-6)">
+        <h2 class="card__title">Méritos Customizados</h2>
+        <p class="card__subtitle">Méritos criados pela interface de admin. Os méritos padrão não aparecem aqui.</p>
+        <div id="custom-merits-list" class="manage-list" aria-label="Lista de méritos customizados">
+          <!-- Renderizado via admin.js -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <a href="index.html" class="footer-link">← Voltar ao ranking</a>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
+  <script src="js/celebration.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
