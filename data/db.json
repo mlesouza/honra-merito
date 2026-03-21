@@ -8,15 +8,5 @@
   ],
   "members": [],
   "customMerits": [],
-  "merits": [
-    {
-      "id": "0780b396-53b1-42db-bf64-573bdc24b568",
-      "recipientId": "marcelo",
-      "meritKey": "commitador_sexta",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T05:41:35.803Z"
-    }
-  ]
+  "merits": []
 }
