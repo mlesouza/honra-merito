@@ -8,15 +8,5 @@
   ],
   "members": [],
   "customMerits": [],
-  "merits": [
-    {
-      "id": "bf1e6762-8729-4965-925e-c1e215e21f84",
-      "recipientId": "marcelo",
-      "meritKey": "refatorador_infinito",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T06:04:59.500Z"
-    }
-  ]
+  "merits": []
 }
