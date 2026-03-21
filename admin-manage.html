@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Honra ao Mérito</title>
+  <title>Gerenciar — Honra ao Mérito</title>
   <script>(function(){var t=localStorage.getItem("honra_merito_theme")||"terminal";document.documentElement.setAttribute("data-theme",t);})()</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,7 +25,9 @@
         <nav class="breadcrumb">
           <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
           <span class="breadcrumb__sep" aria-hidden="true">/</span>
-          <span class="breadcrumb__current">Admin</span>
+          <a href="admin.html" class="breadcrumb__link">Admin</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <span class="breadcrumb__current">Gerenciar</span>
         </nav>
         <div class="site-header__controls">
           <div id="theme-switcher"></div>
@@ -35,58 +37,57 @@
     </div>
   </header>
 
-  <main class="container" id="admin-content" hidden>
-    <div class="admin-hub">
-      <div class="admin-hub__header">
-        <h1 class="admin-hub__title">Painel Admin</h1>
-        <p class="admin-hub__sub">O que você quer fazer?</p>
+  <main class="container" id="page-content" hidden>
+    <div class="page-hero">
+      <span class="page-hero__icon">🗂️</span>
+      <div>
+        <h1 class="page-hero__title">Gerenciar</h1>
+        <p class="page-hero__sub">Revise e corrija méritos concedidos ou tipos criados</p>
+      </div>
+    </div>
+
+    <div id="loading-state" class="loading-state" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <span class="loading-text">Carregando...</span>
+    </div>
+
+    <div id="manage-content" hidden style="max-width:680px;margin:0 auto;">
+      <div class="card">
+        <h2 class="card__title">Méritos Concedidos</h2>
+        <p class="card__subtitle">
+          Apenas você pode remover méritos que você mesmo deu.
+          <span data-tip="Outros membros da equipe verão seus méritos com o ícone de cadeado — só o autor pode remover">Os últimos 30 são exibidos.</span>
+        </p>
+        <div id="recent-merits-list" class="manage-list" aria-label="Lista de méritos recentes"></div>
       </div>
 
-      <div class="admin-hub__grid">
-        <a href="admin-grant.html" class="admin-action-card">
-          <span class="admin-action-card__icon">🏅</span>
-          <div class="admin-action-card__body">
-            <strong class="admin-action-card__title">Dar Mérito</strong>
-            <span class="admin-action-card__desc">Reconheça um colega de equipe por uma façanha</span>
-          </div>
-          <span class="admin-action-card__arrow">→</span>
-        </a>
-
-        <a href="admin-create.html" class="admin-action-card">
-          <span class="admin-action-card__icon">✨</span>
-          <div class="admin-action-card__body">
-            <strong class="admin-action-card__title">Criar Mérito</strong>
-            <span class="admin-action-card__desc">Defina um novo tipo de conquista com badge personalizado</span>
-          </div>
-          <span class="admin-action-card__arrow">→</span>
-        </a>
-
-        <a href="admin-manage.html" class="admin-action-card admin-action-card--danger">
-          <span class="admin-action-card__icon">🗂️</span>
-          <div class="admin-action-card__body">
-            <strong class="admin-action-card__title">Gerenciar</strong>
-            <span class="admin-action-card__desc">Revise e remova méritos concedidos ou tipos criados</span>
-          </div>
-          <span class="admin-action-card__arrow">→</span>
-        </a>
+      <div class="card" style="margin-top: var(--space-6)">
+        <h2 class="card__title">Tipos Customizados</h2>
+        <p class="card__subtitle">
+          <span data-tip="Tipos padrão como 'Deploy na Sexta' vêm do config.js e não aparecem aqui">Méritos criados pela interface.</span>
+          Os padrão do sistema não aparecem aqui.
+        </p>
+        <div id="custom-merits-list" class="manage-list" aria-label="Lista de méritos customizados"></div>
       </div>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <a href="index.html" class="footer-link">← Voltar ao ranking</a>
+      <a href="admin.html" class="footer-link">← Voltar ao admin</a>
     </div>
   </footer>
 
   <script src="js/config.js"></script>
   <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/admin.js"></script>
   <script>document.addEventListener("DOMContentLoaded",()=>{
     Theme.renderSwitcher(document.getElementById("theme-switcher"));
-    AdminPage.initHub();
+    AdminPage.initManage();
   });</script>
 </body>
 </html>

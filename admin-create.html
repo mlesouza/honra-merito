@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Mérito — Honra ao Mérito</title>
+  <script>(function(){var t=localStorage.getItem("honra_merito_theme")||"terminal";document.documentElement.setAttribute("data-theme",t);})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="page-loader" class="page-loader" role="status" aria-label="Carregando...">
+    <div class="page-loader__inner">
+      <div class="page-loader__logo">🏆</div>
+      <div class="page-loader__ring"></div>
+      <p class="page-loader__text">Honra ao Mérito</p>
+      <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__inner">
+        <nav class="breadcrumb">
+          <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <a href="admin.html" class="breadcrumb__link">Admin</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <span class="breadcrumb__current">Criar Mérito</span>
+        </nav>
+        <div class="site-header__controls">
+          <div id="theme-switcher"></div>
+          <div id="user-bar" class="user-bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="page-content" hidden>
+    <div class="page-hero">
+      <span class="page-hero__icon">✨</span>
+      <div>
+        <h1 class="page-hero__title">Criar Mérito</h1>
+        <p class="page-hero__sub">Defina um novo tipo de conquista com badge personalizado</p>
+      </div>
+    </div>
+
+    <div class="create-merit-layout">
+
+      <div class="card">
+        <form id="create-merit-form" novalidate>
+
+          <div class="form-group">
+            <label for="new-merit-name" class="form-label">Nome do mérito <span class="required" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="new-merit-name"
+              name="name"
+              class="form-input"
+              placeholder="Ex: Debugger das Trevas"
+              maxlength="60"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-merit-desc" class="form-label">Descrição <span class="required" aria-hidden="true">*</span></label>
+            <textarea
+              id="new-merit-desc"
+              name="description"
+              class="form-textarea"
+              placeholder="Ex: Passa mais tempo no debugger do que no editor..."
+              maxlength="200"
+              rows="3"
+              required
+              aria-required="true"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ícone <span class="required" aria-hidden="true">*</span></label>
+            <input type="hidden" id="new-merit-emoji" name="emoji" value="🏅" required />
+            <div class="emoji-picker-wrap">
+              <button type="button" class="emoji-trigger" id="emoji-trigger" aria-haspopup="true" aria-expanded="false">
+                <span class="emoji-trigger__preview" id="emoji-display">🏅</span>
+                <span class="emoji-trigger__text">
+                  <span class="emoji-trigger__label">Ícone selecionado</span>
+                  <span class="emoji-trigger__sub">Clique para trocar</span>
+                </span>
+                <span class="emoji-trigger__arrow" aria-hidden="true">›</span>
+              </button>
+              <div class="emoji-picker-dropdown" id="emoji-picker-dropdown" hidden>
+                <div class="emoji-custom-row">
+                  <input
+                    type="text"
+                    id="emoji-custom-input"
+                    class="emoji-custom-input"
+                    placeholder="Colar outro emoji aqui…"
+                    maxlength="4"
+                    aria-label="Digite ou cole um emoji personalizado"
+                  />
+                  <button type="button" class="emoji-custom-btn" id="emoji-custom-confirm">Usar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-merit-bg" class="form-label">Cor de fundo</label>
+              <input type="color" id="new-merit-bg" name="bg" class="form-color" value="#0d1117" />
+            </div>
+            <div class="form-group">
+              <label for="new-merit-border" class="form-label">Cor da borda</label>
+              <input type="color" id="new-merit-border" name="border" class="form-color" value="#39d353" />
+            </div>
+            <div class="form-group">
+              <label for="new-merit-text" class="form-label">Cor do texto</label>
+              <input type="color" id="new-merit-text" name="text" class="form-color" value="#e6edf3" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new-merit-shape" class="form-label">Formato do badge</label>
+            <select id="new-merit-shape" name="shape" class="form-select">
+              <option value="hexagon">⬡ Hexágono</option>
+              <option value="pentagon">⬠ Pentágono</option>
+              <option value="shield">🛡 Escudo</option>
+              <option value="circle">⬤ Círculo</option>
+              <option value="scroll">⬭ Oval</option>
+              <option value="diamond">◆ Diamante</option>
+              <option value="star5">★ Estrela 5 pontas</option>
+              <option value="star8">✸ Burst 8 pontas</option>
+            </select>
+          </div>
+
+          <div id="create-status" class="status-message" hidden aria-live="polite"></div>
+
+          <button type="submit" class="btn btn--primary btn--full">
+            Criar Mérito ✨
+          </button>
+        </form>
+      </div>
+
+      <!-- Preview ao vivo -->
+      <div class="badge-preview-panel" aria-live="polite" aria-label="Prévia do badge em tempo real">
+        <h3 class="badge-preview-panel__title">Prévia</h3>
+        <div id="badge-preview" class="badge-preview-container"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <a href="admin.html" class="footer-link">← Voltar ao admin</a>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/admin.js"></script>
+  <script>document.addEventListener("DOMContentLoaded",()=>{
+    Theme.renderSwitcher(document.getElementById("theme-switcher"));
+    AdminPage.initCreate();
+  });</script>
+</body>
+</html>

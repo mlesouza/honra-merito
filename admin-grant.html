@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dar Mérito — Honra ao Mérito</title>
+  <script>(function(){var t=localStorage.getItem("honra_merito_theme")||"terminal";document.documentElement.setAttribute("data-theme",t);})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="page-loader" class="page-loader" role="status" aria-label="Carregando...">
+    <div class="page-loader__inner">
+      <div class="page-loader__logo">🏆</div>
+      <div class="page-loader__ring"></div>
+      <p class="page-loader__text">Honra ao Mérito</p>
+      <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__inner">
+        <nav class="breadcrumb">
+          <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <a href="admin.html" class="breadcrumb__link">Admin</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <span class="breadcrumb__current">Dar Mérito</span>
+        </nav>
+        <div class="site-header__controls">
+          <div id="theme-switcher"></div>
+          <div id="user-bar" class="user-bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="page-content" hidden>
+    <div class="page-hero">
+      <span class="page-hero__icon">🏅</span>
+      <div>
+        <h1 class="page-hero__title">Dar Mérito</h1>
+        <p class="page-hero__sub">Reconheça um colega por uma façanha memorável</p>
+      </div>
+    </div>
+
+    <div class="card card--narrow">
+      <form id="grant-form" novalidate>
+
+        <div class="form-group">
+          <label for="grant-member" class="form-label">Quem está recebendo? <span class="required" aria-hidden="true">*</span></label>
+          <select id="grant-member" name="member" class="form-select" required aria-required="true">
+            <option value="">Selecione um membro...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="grant-merit" class="form-label">Qual mérito? <span class="required" aria-hidden="true">*</span></label>
+          <select id="grant-merit" name="merit" class="form-select" required aria-required="true">
+            <option value="">Selecione um mérito...</option>
+          </select>
+        </div>
+
+        <!-- Preview do badge selecionado -->
+        <div id="merit-preview-wrap" class="merit-select-preview" hidden>
+          <div id="merit-preview-badge"></div>
+          <div id="merit-preview-info"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="grant-reason" class="form-label">Motivo <span class="text-muted">(opcional)</span></label>
+          <input
+            type="text"
+            id="grant-reason"
+            name="reason"
+            class="form-input"
+            placeholder="Ex: Commitou direto na main às 23h e foi pra casa..."
+            maxlength="300"
+            aria-describedby="grant-reason-hint"
+          />
+          <span id="grant-reason-hint" class="form-hint">Máximo 300 caracteres</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Dado por</label>
+          <div id="grant-giver-display" class="giver-display" aria-live="polite"></div>
+        </div>
+
+        <div id="grant-status" class="status-message" hidden aria-live="polite"></div>
+
+        <button type="submit" class="btn btn--primary btn--full">
+          Dar Mérito 🏅
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <a href="admin.html" class="footer-link">← Voltar ao admin</a>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/github-api.js"></script>
+  <script src="js/badge-generator.js"></script>
+  <script src="js/celebration.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/admin.js"></script>
+  <script>document.addEventListener("DOMContentLoaded",()=>{
+    Theme.renderSwitcher(document.getElementById("theme-switcher"));
+    AdminPage.initGrant();
+  });</script>
+</body>
+</html>

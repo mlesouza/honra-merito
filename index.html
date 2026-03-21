@@ -4,75 +4,178 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🏆 Honra ao Mérito</title>
-  <meta name="description" content="Sistema de conquistas e méritos engraçados para equipes de desenvolvimento." />
+  <meta name="description" content="Conquistas e méritos imortalizados da equipe de desenvolvimento." />
+  <script>(function(){var t=localStorage.getItem("honra_merito_theme")||"terminal";document.documentElement.setAttribute("data-theme",t);})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <div id="page-loader" class="page-loader" role="status" aria-label="Carregando...">
+    <div class="page-loader__inner">
+      <div class="page-loader__logo">🏆</div>
+      <div class="page-loader__ring"></div>
+      <p class="page-loader__text">Honra ao Mérito</p>
+      <div class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </div>
   <header class="site-header">
     <div class="container">
       <div class="site-header__inner">
-        <div>
-          <h1 class="site-header__title">🏆 Honra ao Mérito</h1>
-          <p class="site-header__subtitle">Conquistas imortalizadas da equipe de dev</p>
+        <div class="site-header__brand">
+          <span class="site-header__logo">🏆</span>
+          <div>
+            <h1 class="site-header__title">Honra ao Mérito</h1>
+            <p class="site-header__subtitle">Conquistas da equipe de dev</p>
+          </div>
         </div>
-        <div id="user-bar" class="user-bar"></div>
+        <div class="site-header__controls">
+          <div id="theme-switcher"></div>
+          <div id="user-bar" class="user-bar"></div>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="container" id="main-content">
+  <main id="main-content">
 
-    <!-- Estado de carregamento -->
-    <div id="loading-state" class="loading-state" aria-live="polite">
-      <div class="loading-spinner" aria-hidden="true"></div>
-      <span>Carregando dados...</span>
-    </div>
+    <!-- loading-state oculto: o page-loader cobre a tela toda durante o carregamento -->
+    <div id="loading-state" hidden aria-live="polite"></div>
 
-    <!-- Mensagem de erro global -->
     <div id="error-state" class="error-banner" hidden role="alert"></div>
 
-    <!-- Seção Ranking -->
-    <section class="section" aria-labelledby="ranking-heading">
-      <h2 class="section__title" id="ranking-heading">
-        <span aria-hidden="true">🥇</span> Ranking da Equipe
-      </h2>
-      <div id="ranking-list" class="ranking-grid" aria-label="Ranking de membros por méritos">
-        <!-- Renderizado via app.js -->
+    <!-- Hero Banner -->
+    <div class="home-hero" id="home-hero" hidden>
+      <div class="home-hero__bg" aria-hidden="true"></div>
+      <div class="container home-hero__inner">
+        <div class="home-hero__text">
+          <p class="home-hero__eyebrow">Hall da Fama</p>
+          <h2 class="home-hero__title">Cada façanha<br>merece ser lembrada</h2>
+          <p class="home-hero__sub">Reconheça quem foi além — ou quem deu deploy na sexta-feira.</p>
+        </div>
+        <a href="admin-grant.html" class="btn btn--primary home-hero__cta">
+          🏅 Dar Mérito
+        </a>
       </div>
-    </section>
+    </div>
 
-    <!-- Seção Feed -->
-    <section class="section" aria-labelledby="feed-heading">
-      <h2 class="section__title" id="feed-heading">
-        <span aria-hidden="true">📜</span> Últimas Conquistas
-      </h2>
-      <div id="feed-list" class="feed-list" aria-label="Feed de méritos concedidos">
-        <!-- Renderizado via app.js -->
-      </div>
-      <div class="feed-actions">
-        <button id="feed-load-more" class="btn btn--secondary" hidden aria-label="Carregar mais méritos">
-          Carregar mais
-        </button>
-      </div>
-    </section>
+    <div class="container" id="main-sections" hidden>
 
+      <!-- Stats -->
+      <div class="stats-bar" id="stats-bar" aria-label="Estatísticas da equipe">
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">🏅</div>
+          <div class="stat-card__value" id="stat-total-merits">—</div>
+          <div class="stat-card__label">Méritos</div>
+        </div>
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">👥</div>
+          <div class="stat-card__value" id="stat-members">—</div>
+          <div class="stat-card__label">Membros</div>
+        </div>
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">✨</div>
+          <div class="stat-card__value" id="stat-unique-merits">—</div>
+          <div class="stat-card__label" data-tip="Quantos tipos diferentes de mérito já foram concedidos">Tipos</div>
+        </div>
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">🔥</div>
+          <div class="stat-card__value" id="stat-this-week">—</div>
+          <div class="stat-card__label" data-tip="Méritos concedidos nos últimos 7 dias">Esta semana</div>
+        </div>
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">📅</div>
+          <div class="stat-card__value" id="stat-this-month">—</div>
+          <div class="stat-card__label" data-tip="Méritos concedidos nos últimos 30 dias">Este mês</div>
+        </div>
+        <div class="stat-card" data-reveal>
+          <div class="stat-card__icon">📊</div>
+          <div class="stat-card__value" id="stat-avg">—</div>
+          <div class="stat-card__label" data-tip="Média de méritos por membro da equipe">Média/membro</div>
+        </div>
+      </div>
+
+      <!-- Pódio Top 3 -->
+      <section class="section" aria-labelledby="podium-heading">
+        <div class="section-header">
+          <h2 class="section__title" id="podium-heading">🏆 Pódio</h2>
+          <span class="section__badge" id="podium-period">Todos os tempos</span>
+        </div>
+        <div id="podium" class="podium" aria-label="Top 3 membros"></div>
+      </section>
+
+      <!-- Insights: Méritos em Alta + Top Dadores -->
+      <div class="insights-grid">
+        <section class="section" aria-labelledby="popular-merits-heading">
+          <div class="section-header">
+            <h2 class="section__title" id="popular-merits-heading">🏅 Méritos em Alta</h2>
+            <span class="section__badge" data-tip="Os tipos de mérito mais concedidos na equipe">Por frequência</span>
+          </div>
+          <div id="popular-merits" class="popular-merits" aria-label="Méritos mais populares"></div>
+        </section>
+        <section class="section" aria-labelledby="top-givers-heading">
+          <div class="section-header">
+            <h2 class="section__title" id="top-givers-heading">🎁 Quem Mais Reconhece</h2>
+            <span class="section__badge" data-tip="Membros que mais concedem méritos para os colegas">Top dadores</span>
+          </div>
+          <div id="top-givers" class="top-givers" aria-label="Membros que mais deram méritos"></div>
+        </section>
+      </div>
+
+      <!-- Atividade Mensal -->
+      <section class="section" aria-labelledby="activity-heading">
+        <div class="section-header">
+          <h2 class="section__title" id="activity-heading">📈 Atividade</h2>
+          <span class="section__badge" id="activity-period">Últimos 12 meses</span>
+        </div>
+        <div id="activity-chart" class="activity-chart" aria-label="Gráfico de atividade mensal"></div>
+      </section>
+
+      <!-- Ranking geral -->
+      <section class="section" aria-labelledby="ranking-heading">
+        <div class="section-header">
+          <h2 class="section__title" id="ranking-heading">📋 Ranking</h2>
+          <span class="section__badge" data-tip="Membros ordenados pelo total de méritos recebidos">#4 em diante</span>
+        </div>
+        <div id="ranking-list" class="ranking-list" aria-label="Ranking completo"></div>
+      </section>
+
+      <!-- Feed -->
+      <section class="section" aria-labelledby="feed-heading">
+        <div class="section-header">
+          <h2 class="section__title" id="feed-heading">📜 Últimas Conquistas</h2>
+        </div>
+        <div id="feed-list" class="feed-list" aria-label="Feed de méritos"></div>
+        <div class="feed-actions">
+          <button id="feed-load-more" class="btn btn--secondary" hidden>
+            Carregar mais
+          </button>
+        </div>
+      </section>
+
+    </div><!-- /container -->
   </main>
 
-  <!-- Botão flutuante para dar mérito -->
-  <a href="admin.html" class="fab" aria-label="Dar um mérito para alguém">
-    <span aria-hidden="true">+</span> Dar Mérito
+  <a href="admin-grant.html" class="fab" aria-label="Dar um mérito">
+    <span aria-hidden="true">＋</span>
+    <span>Dar Mérito</span>
   </a>
 
   <footer class="site-footer">
     <div class="container">
-      <p>Honra ao Mérito — porque todo dev merece ser lembrado pelas suas façanhas</p>
+      <p>Honra ao Mérito · porque todo dev merece ser lembrado pelas suas façanhas</p>
     </div>
   </footer>
 
   <script src="js/config.js"></script>
   <script src="js/github-api.js"></script>
   <script src="js/badge-generator.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/animations.js"></script>
   <script src="js/app.js"></script>
+  <script>document.addEventListener("DOMContentLoaded",()=>Theme.renderSwitcher(document.getElementById("theme-switcher")));</script>
 </body>
 </html>

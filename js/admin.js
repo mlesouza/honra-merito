@@ -1,13 +1,13 @@
 // ============================================================
-// admin.js — Lógica da página de administração
-// Abas: Conceder Mérito | Criar Novo Mérito | Gerenciar
+// admin.js — Lógica das páginas de administração
+// Páginas: admin.html | admin-grant.html | admin-create.html | admin-manage.html
 // ============================================================
 
 const AdminPage = (() => {
   let currentDb = null;
   let badgePreviewDebounceTimer = null;
 
-  // --- Utilitários ---
+  // ─── Utilitários compartilhados ───────────────────────────
 
   const generateUUID = () =>
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -16,9 +16,7 @@ const AdminPage = (() => {
     });
 
   const slugify = (text) =>
-    text
-      .toLowerCase()
-      .normalize("NFD")
+    text.toLowerCase().normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "_")
       .replace(/^_|_$/g, "");
@@ -27,8 +25,13 @@ const AdminPage = (() => {
     String(input).replace(/<[^>]*>/g, "").trim().slice(0, 500);
 
   const getAllMeritsConfig = () => [...MERITS, ...(currentDb?.customMerits ?? [])];
+  const findMeritConfig   = (key) => getAllMeritsConfig().find((m) => m.key === key);
 
-  const findMeritConfig = (key) => getAllMeritsConfig().find((m) => m.key === key);
+  const formatDate = (iso) =>
+    new Date(iso).toLocaleDateString("pt-BR", {
+      day: "2-digit", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    });
 
   const showStatus = (elementId, message, type = "success") => {
     const el = document.getElementById(elementId);
@@ -36,11 +39,7 @@ const AdminPage = (() => {
     el.textContent = message;
     el.className = `status-message status-message--${type}`;
     el.hidden = false;
-    el.setAttribute("aria-live", "polite");
-
-    if (type === "success") {
-      setTimeout(() => { el.hidden = true; }, 5000);
-    }
+    if (type === "success") setTimeout(() => { el.hidden = true; }, 5000);
   };
 
   const setButtonLoading = (btn, loading, originalText) => {
@@ -48,15 +47,47 @@ const AdminPage = (() => {
     btn.textContent = loading ? "Aguarde..." : originalText;
   };
 
-  // --- População de selects ---
+  // Requer login e retorna false se o usuário cancelar
+  const requireAuth = async () => {
+    const userBarEl = document.getElementById("user-bar");
+    Auth.renderUserBar(userBarEl);
+    try {
+      await Auth.requireLogin();
+    } catch {
+      return false;
+    }
+    // Carrega DB para ter foto de perfil disponível no user bar
+    try {
+      await loadDB();
+    } catch { /* ignora — cada init() vai tentar de novo */ }
+    Auth.renderUserBar(userBarEl, currentDb?.users ?? []);
+    return true;
+  };
+
+  const loadDB = async () => {
+    const { data } = await GitHubAPI.readDB();
+    currentDb = data;
+  };
+
+  const showPage = (id = "page-content") => {
+    const el = document.getElementById(id);
+    if (el) el.hidden = false;
+    // Hide full-screen loader
+    const loader = document.getElementById("page-loader");
+    if (loader) {
+      loader.classList.add("page-loader--hiding");
+      loader.addEventListener("transitionend", () => loader.remove(), { once: true });
+      setTimeout(() => loader.remove(), 600); // fallback
+    }
+  };
+
+  // ─── Selects ──────────────────────────────────────────────
 
   const populateMemberSelect = (selectId) => {
     const select = document.getElementById(selectId);
     if (!select) return;
-
     const allMembers = [...CONFIG.MEMBERS, ...(currentDb?.members ?? [])]
-      .filter((m, idx, arr) => arr.findIndex((x) => x.id === m.id) === idx);
-
+      .filter((m, i, arr) => arr.findIndex((x) => x.id === m.id) === i);
     select.innerHTML = '<option value="">Selecione um membro...</option>' +
       allMembers.map((m) => `<option value="${m.id}">${m.avatar} ${m.name}</option>`).join("");
   };
@@ -64,20 +95,219 @@ const AdminPage = (() => {
   const populateMeritSelect = (selectId) => {
     const select = document.getElementById(selectId);
     if (!select) return;
-
     select.innerHTML = '<option value="">Selecione um mérito...</option>' +
       getAllMeritsConfig().map((m) =>
         `<option value="${m.key}">${m.emoji} ${m.title}</option>`
       ).join("");
   };
 
-  // --- Aba 1: Conceder Mérito ---
+  // ─── Emoji Picker ─────────────────────────────────────────
 
-  const initGrantTab = () => {
+  const EMOJI_GROUPS = [
+    { label: "Conquistas",      icons: ["🏅","🥇","🥈","🥉","🏆","🎖️","🎯","🎗️","🏵️","👑","💎","🔮","🎀","🎫","🎪"] },
+    { label: "Dev / Tech",      icons: ["💻","🖥️","⌨️","🖱️","📱","💾","💿","📡","🛰️","🔧","⚙️","🛠️","🔩","💡","🤖","👾","🧩","🔦","🔋","📲"] },
+    { label: "Animais",         icons: ["🐍","🦁","🐯","🦊","🐺","🦅","🦋","🦈","🐉","🦄","🐸","🐙","🦂","🦖","🦇"] },
+    { label: "Fogo / Elementos",icons: ["🔥","⚡","❄️","🌊","💨","🌪️","💥","☄️","🌋","🌈","🌙","⭐","🌟","💫","✨"] },
+    { label: "Pessoas / RPG",   icons: ["🧙","🥷","🧛","🧟","🦹","🦸","🧝","👨‍💻","👩‍💻","🕵️","💀","☠️","👽","🤡","🃏"] },
+    { label: "Objetos",         icons: ["🍕","🎮","🎲","🎸","🥁","🎤","🎨","🎬","🚀","⚔️","🔑","📜","🧪","💊","🏴‍☠️"] },
+  ];
+
+  const initEmojiPicker = () => {
+    const trigger  = document.getElementById("emoji-trigger");
+    const dropdown = document.getElementById("emoji-picker-dropdown");
+    const display  = document.getElementById("emoji-display");
+    const hidden   = document.getElementById("new-merit-emoji");
+    if (!trigger || !dropdown) return;
+
+    dropdown.insertAdjacentHTML("beforeend", EMOJI_GROUPS.map((g) => `
+      <div class="emoji-group">
+        <div class="emoji-group__label">${g.label}</div>
+        <div class="emoji-group__grid">
+          ${g.icons.map((e) => `<button type="button" class="emoji-opt" data-emoji="${e}" aria-label="${e}">${e}</button>`).join("")}
+        </div>
+      </div>
+    `).join(""));
+
+    const applyEmoji = (emoji) => {
+      if (!emoji?.trim()) return;
+      display.textContent = emoji;
+      hidden.value = emoji;
+      dropdown.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+      debouncedPreview();
+    };
+
+    trigger.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const open = !dropdown.hidden;
+      dropdown.hidden = open;
+      trigger.setAttribute("aria-expanded", String(!open));
+    });
+
+    dropdown.addEventListener("click", (ev) => {
+      const opt = ev.target.closest(".emoji-opt");
+      if (opt) { applyEmoji(opt.dataset.emoji); return; }
+      if (ev.target.closest("#emoji-custom-confirm")) {
+        const inp = document.getElementById("emoji-custom-input");
+        if (inp?.value.trim()) { applyEmoji(inp.value.trim()); inp.value = ""; }
+      }
+    });
+
+    document.getElementById("emoji-custom-input")?.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        const v = ev.target.value.trim();
+        if (v) { applyEmoji(v); ev.target.value = ""; }
+      }
+    });
+
+    document.addEventListener("click", (ev) => {
+      if (!trigger.contains(ev.target) && !dropdown.contains(ev.target)) {
+        dropdown.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+      }
+    });
+  };
+
+  // ─── Badge Preview ────────────────────────────────────────
+
+  const updateBadgePreview = () => {
+    const previewContainer = document.getElementById("badge-preview");
+    if (!previewContainer) return;
+    const meritConfig = {
+      key: "preview",
+      emoji:       document.getElementById("new-merit-emoji")?.value  || "🏅",
+      title:       document.getElementById("new-merit-name")?.value   || "Novo Mérito",
+      description: document.getElementById("new-merit-desc")?.value   || "",
+      badge: {
+        backgroundColor: document.getElementById("new-merit-bg")?.value     ?? "#0d1117",
+        borderColor:     document.getElementById("new-merit-border")?.value ?? "#39d353",
+        textColor:       document.getElementById("new-merit-text")?.value   ?? "#e6edf3",
+        shape:           document.getElementById("new-merit-shape")?.value  ?? "hexagon",
+      }
+    };
+    previewContainer.innerHTML = BadgeGenerator.render(meritConfig, { size: 140 });
+  };
+
+  const debouncedPreview = () => {
+    clearTimeout(badgePreviewDebounceTimer);
+    badgePreviewDebounceTimer = setTimeout(updateBadgePreview, 150);
+  };
+
+  // ─── Manage: remover méritos ──────────────────────────────
+
+  const renderRecentMerits = () => {
+    const container = document.getElementById("recent-merits-list");
+    if (!container) return;
+    const allMembers   = [...CONFIG.MEMBERS, ...(currentDb.members ?? [])];
+    const recent       = [...currentDb.merits].reverse().slice(0, 30);
+    const currentUserId = Auth.getCurrentUser()?.memberId;
+
+    if (recent.length === 0) {
+      container.innerHTML = '<p class="text-muted">Nenhum mérito concedido ainda.</p>';
+      return;
+    }
+
+    container.innerHTML = recent.map((merit) => {
+      const member = allMembers.find((m) => m.id === merit.recipientId);
+      const mc     = getAllMeritsConfig().find((m) => m.key === merit.meritKey);
+      if (!member || !mc) return "";
+      const canRemove = merit.givenById === currentUserId;
+      return `
+        <div class="manage-item" data-merit-id="${merit.id}">
+          <div class="manage-item__info">
+            <span>${mc.emoji} <strong>${mc.title}</strong> → ${member.avatar} ${member.name}</span>
+            <span class="text-muted">${merit.reason ? `"${merit.reason}" · ` : ""}por ${merit.givenBy ?? "Anônimo"} · ${formatDate(merit.timestamp)}</span>
+          </div>
+          ${canRemove
+            ? `<button class="btn btn--danger btn--sm" data-action="remove-merit" data-id="${merit.id}" aria-label="Remover">Remover</button>`
+            : `<span class="manage-item__owner-lock" title="Apenas quem deu pode remover">🔒</span>`}
+        </div>`;
+    }).join("");
+
+    container.querySelectorAll("[data-action=remove-merit]").forEach((btn) =>
+      btn.addEventListener("click", () => removeMerit(btn.dataset.id, btn))
+    );
+  };
+
+  const renderCustomMeritsList = () => {
+    const container = document.getElementById("custom-merits-list");
+    if (!container) return;
+    const customs = currentDb.customMerits ?? [];
+    if (customs.length === 0) {
+      container.innerHTML = '<p class="text-muted">Nenhum mérito customizado criado ainda.</p>';
+      return;
+    }
+    container.innerHTML = customs.map((mc) => `
+      <div class="manage-item" data-custom-key="${mc.key}">
+        <div class="manage-item__badge">${BadgeGenerator.render(mc, { size: 48, showLabel: false })}</div>
+        <div class="manage-item__info">
+          <span>${mc.emoji} <strong>${mc.title}</strong></span>
+          <span class="text-muted">${mc.description}</span>
+        </div>
+        <button class="btn btn--danger btn--sm" data-action="delete-custom" data-key="${mc.key}"
+          aria-label="Excluir ${mc.title}">Excluir</button>
+      </div>
+    `).join("");
+
+    container.querySelectorAll("[data-action=delete-custom]").forEach((btn) =>
+      btn.addEventListener("click", () => deleteCustomMerit(btn.dataset.key, btn))
+    );
+  };
+
+  const removeMerit = async (meritId, btn) => {
+    if (!confirm("Remover este mérito? Esta ação não pode ser desfeita.")) return;
+    const originalText = btn.textContent;
+    setButtonLoading(btn, true, originalText);
+    try {
+      await GitHubAPI.updateDB((data) => {
+        data.merits = data.merits.filter((m) => m.id !== meritId);
+        return data;
+      }, `fix: remove mérito ${meritId}`);
+      await loadDB();
+      renderRecentMerits();
+      renderCustomMeritsList();
+    } catch (err) {
+      alert(`Erro ao remover: ${err.message}`);
+      setButtonLoading(btn, false, originalText);
+    }
+  };
+
+  const deleteCustomMerit = async (key, btn) => {
+    if (!confirm(`Excluir o mérito '${key}'? Os registros já concedidos são mantidos.`)) return;
+    const originalText = btn.textContent;
+    setButtonLoading(btn, true, originalText);
+    try {
+      await GitHubAPI.updateDB((data) => {
+        data.customMerits = data.customMerits.filter((m) => m.key !== key);
+        return data;
+      }, `fix: remove mérito customizado '${key}'`);
+      await loadDB();
+      renderRecentMerits();
+      renderCustomMeritsList();
+    } catch (err) {
+      alert(`Erro ao excluir: ${err.message}`);
+      setButtonLoading(btn, false, originalText);
+    }
+  };
+
+  // ─── initHub (admin.html) ─────────────────────────────────
+
+  const initHub = async () => {
+    if (!await requireAuth()) return;
+    showPage("admin-content");
+  };
+
+  // ─── initGrant (admin-grant.html) ────────────────────────
+
+  const initGrant = async () => {
+    if (!await requireAuth()) return;
+    try { await loadDB(); } catch (err) { alert(`Erro: ${err.message}`); return; }
+    showPage();
+
     populateMemberSelect("grant-member");
     populateMeritSelect("grant-merit");
 
-    // Exibe o nome do usuário logado como "dado por"
     const currentUser = Auth.getCurrentUser();
     const giverDisplay = document.getElementById("grant-giver-display");
     if (giverDisplay && currentUser) {
@@ -85,6 +315,20 @@ const AdminPage = (() => {
         <span class="giver-display__avatar">${currentUser.avatar}</span>
         <span class="giver-display__name">${currentUser.name}</span>`;
     }
+
+    // Preview do badge ao selecionar mérito
+    const meritSelect = document.getElementById("grant-merit");
+    const previewWrap = document.getElementById("merit-preview-wrap");
+    const previewBadge = document.getElementById("merit-preview-badge");
+    const previewInfo  = document.getElementById("merit-preview-info");
+
+    meritSelect?.addEventListener("change", () => {
+      const mc = findMeritConfig(meritSelect.value);
+      if (!mc || !previewWrap) return;
+      previewWrap.hidden = false;
+      previewBadge.innerHTML = BadgeGenerator.render(mc, { size: 80 });
+      previewInfo.innerHTML  = `<strong>${mc.title}</strong><br><span class="text-muted">${mc.description}</span>`;
+    });
 
     const form = document.getElementById("grant-form");
     if (!form) return;
@@ -95,9 +339,9 @@ const AdminPage = (() => {
       const originalText = btn.textContent;
 
       const recipientId = sanitizeText(document.getElementById("grant-member").value);
-      const meritKey = sanitizeText(document.getElementById("grant-merit").value);
-      const reason = sanitizeText(document.getElementById("grant-reason").value);
-      const givenBy = Auth.getCurrentUser()?.name ?? "Anônimo";
+      const meritKey    = sanitizeText(document.getElementById("grant-merit").value);
+      const reason      = sanitizeText(document.getElementById("grant-reason").value);
+      const givenBy     = Auth.getCurrentUser()?.name ?? "Anônimo";
 
       if (!recipientId || !meritKey) {
         showStatus("grant-status", "Preencha o membro e o mérito.", "error");
@@ -106,85 +350,48 @@ const AdminPage = (() => {
 
       setButtonLoading(btn, true, originalText);
 
-      // UI otimista: mostra celebração imediatamente
-      const meritConfig = findMeritConfig(meritKey);
-      const allMembers = [...CONFIG.MEMBERS, ...(currentDb?.members ?? [])];
-      const member = allMembers.find((m) => m.id === recipientId);
-
-      if (meritConfig && member) {
-        Celebration.trigger(meritConfig, member.name);
-      }
+      const mc     = findMeritConfig(meritKey);
+      const member = [...CONFIG.MEMBERS, ...(currentDb?.members ?? [])].find((m) => m.id === recipientId);
+      if (mc && member) Celebration.trigger(mc, member.name);
 
       try {
-        const currentUserId = Auth.getCurrentUser()?.memberId ?? null;
         await GitHubAPI.updateDB((data) => {
           data.merits.push({
             id: generateUUID(),
             recipientId,
             meritKey,
             givenBy,
-            givenById: currentUserId,
+            givenById: Auth.getCurrentUser()?.memberId ?? null,
             reason: reason || null,
             timestamp: new Date().toISOString()
           });
           return data;
         }, `feat: concede mérito '${meritKey}' para ${recipientId}`);
 
-        showStatus("grant-status", "Mérito concedido com sucesso! 🏅", "success");
+        showStatus("grant-status", "Mérito concedido! 🏅", "success");
         form.reset();
-
-        // Recarrega db local para manter estado atual
-        const { data } = await GitHubAPI.readDB();
-        currentDb = data;
+        if (previewWrap) previewWrap.hidden = true;
+        await loadDB();
       } catch (err) {
-        showStatus("grant-status", `Erro ao salvar: ${err.message}`, "error");
+        showStatus("grant-status", `Erro: ${err.message}`, "error");
       } finally {
         setButtonLoading(btn, false, originalText);
       }
     });
   };
 
-  // --- Aba 2: Criar Novo Mérito ---
+  // ─── initCreate (admin-create.html) ──────────────────────
 
-  const updateBadgePreview = () => {
-    const name = document.getElementById("new-merit-name")?.value ?? "";
-    const description = document.getElementById("new-merit-desc")?.value ?? "";
-    const emoji = document.getElementById("new-merit-emoji")?.value || "🏅";
-    const bgColor = document.getElementById("new-merit-bg")?.value ?? "#0d1117";
-    const borderColor = document.getElementById("new-merit-border")?.value ?? "#39d353";
-    const textColor = document.getElementById("new-merit-text")?.value ?? "#e6edf3";
-    const shape = document.getElementById("new-merit-shape")?.value ?? "hexagon";
+  const initCreate = async () => {
+    if (!await requireAuth()) return;
+    try { await loadDB(); } catch (err) { alert(`Erro: ${err.message}`); return; }
+    showPage();
 
-    const previewContainer = document.getElementById("badge-preview");
-    if (!previewContainer) return;
-
-    const meritConfig = {
-      key: "preview",
-      emoji,
-      title: name || "Novo Mérito",
-      description,
-      badge: { backgroundColor: bgColor, borderColor, textColor, shape }
-    };
-
-    previewContainer.innerHTML = BadgeGenerator.render(meritConfig, { size: 140 });
-  };
-
-  const debouncedPreview = () => {
-    clearTimeout(badgePreviewDebounceTimer);
-    badgePreviewDebounceTimer = setTimeout(updateBadgePreview, 150);
-  };
-
-  const initCreateTab = () => {
     updateBadgePreview();
+    initEmojiPicker();
 
-    const previewInputs = [
-      "new-merit-name", "new-merit-desc", "new-merit-emoji",
-      "new-merit-bg", "new-merit-border", "new-merit-text", "new-merit-shape"
-    ];
-
-    previewInputs.forEach((id) => {
-      document.getElementById(id)?.addEventListener("input", debouncedPreview);
-    });
+    ["new-merit-name","new-merit-desc","new-merit-bg","new-merit-border","new-merit-text","new-merit-shape"]
+      .forEach((id) => document.getElementById(id)?.addEventListener("input", debouncedPreview));
 
     const form = document.getElementById("create-merit-form");
     if (!form) return;
@@ -194,13 +401,13 @@ const AdminPage = (() => {
       const btn = form.querySelector("button[type=submit]");
       const originalText = btn.textContent;
 
-      const name = sanitizeText(document.getElementById("new-merit-name").value);
+      const name        = sanitizeText(document.getElementById("new-merit-name").value);
       const description = sanitizeText(document.getElementById("new-merit-desc").value);
-      const emoji = sanitizeText(document.getElementById("new-merit-emoji").value);
-      const bgColor = document.getElementById("new-merit-bg").value;
+      const emoji       = sanitizeText(document.getElementById("new-merit-emoji").value);
+      const bgColor     = document.getElementById("new-merit-bg").value;
       const borderColor = document.getElementById("new-merit-border").value;
-      const textColor = document.getElementById("new-merit-text").value;
-      const shape = document.getElementById("new-merit-shape").value;
+      const textColor   = document.getElementById("new-merit-text").value;
+      const shape       = document.getElementById("new-merit-shape").value;
 
       if (!name || !description || !emoji) {
         showStatus("create-status", "Preencha todos os campos obrigatórios.", "error");
@@ -208,10 +415,8 @@ const AdminPage = (() => {
       }
 
       const key = slugify(name);
-      const allMerits = getAllMeritsConfig();
-
-      if (allMerits.some((m) => m.key === key)) {
-        showStatus("create-status", `Já existe um mérito com a chave '${key}'. Escolha um nome diferente.`, "error");
+      if (getAllMeritsConfig().some((m) => m.key === key)) {
+        showStatus("create-status", `Já existe um mérito com a chave '${key}'.`, "error");
         return;
       }
 
@@ -220,223 +425,47 @@ const AdminPage = (() => {
       try {
         await GitHubAPI.updateDB((data) => {
           data.customMerits.push({
-            key,
-            emoji,
-            title: name,
-            description,
+            key, emoji, title: name, description,
             badge: { backgroundColor: bgColor, borderColor, textColor, shape },
             createdAt: new Date().toISOString()
           });
           return data;
         }, `feat: cria mérito customizado '${key}'`);
 
-        showStatus("create-status", `Mérito '${name}' criado com sucesso! ✨`, "success");
+        showStatus("create-status", `Mérito '${name}' criado! ✨`, "success");
         form.reset();
+        document.getElementById("emoji-display").textContent = "🏅";
+        document.getElementById("new-merit-emoji").value = "🏅";
         updateBadgePreview();
-
-        const { data } = await GitHubAPI.readDB();
-        currentDb = data;
-
-        // Atualiza selects com o novo mérito
-        populateMeritSelect("grant-merit");
-        renderManageTab();
+        await loadDB();
       } catch (err) {
-        showStatus("create-status", `Erro ao criar mérito: ${err.message}`, "error");
+        showStatus("create-status", `Erro: ${err.message}`, "error");
       } finally {
         setButtonLoading(btn, false, originalText);
       }
     });
   };
 
-  // --- Aba 3: Gerenciar ---
+  // ─── initManage (admin-manage.html) ──────────────────────
 
-  const formatDate = (isoString) =>
-    new Date(isoString).toLocaleDateString("pt-BR", {
-      day: "2-digit", month: "short", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    });
+  const initManage = async () => {
+    if (!await requireAuth()) return;
 
-  const renderManageTab = () => {
-    if (!currentDb) return;
-
-    renderRecentMerits();
-    renderCustomMeritsList();
-  };
-
-  const renderRecentMerits = () => {
-    const container = document.getElementById("recent-merits-list");
-    if (!container) return;
-
-    const allMembers = [...CONFIG.MEMBERS, ...(currentDb.members ?? [])];
-    const recent = [...currentDb.merits].reverse().slice(0, 30);
-
-    if (recent.length === 0) {
-      container.innerHTML = '<p class="text-muted">Nenhum mérito concedido ainda.</p>';
-      return;
-    }
-
-    const currentUserId = Auth.getCurrentUser()?.memberId;
-
-    container.innerHTML = recent.map((merit) => {
-      const member = allMembers.find((m) => m.id === merit.recipientId);
-      const mc = getAllMeritsConfig().find((m) => m.key === merit.meritKey);
-      if (!member || !mc) return "";
-
-      // Só quem deu o mérito pode remover
-      const canRemove = merit.givenById === currentUserId;
-
-      return `
-        <div class="manage-item" data-merit-id="${merit.id}">
-          <div class="manage-item__info">
-            <span>${mc.emoji} <strong>${mc.title}</strong> → ${member.avatar} ${member.name}</span>
-            <span class="text-muted">${merit.reason ? `"${merit.reason}" · ` : ""}por ${merit.givenBy ?? "Anônimo"} · ${formatDate(merit.timestamp)}</span>
-          </div>
-          ${canRemove ? `
-          <button
-            class="btn btn--danger btn--sm"
-            data-action="remove-merit"
-            data-id="${merit.id}"
-            aria-label="Remover mérito de ${member.name}"
-          >Remover</button>` : `<span class="manage-item__owner-lock" title="Apenas quem deu este mérito pode removê-lo">🔒</span>`}
-        </div>
-      `;
-    }).join("");
-
-    container.querySelectorAll("[data-action=remove-merit]").forEach((btn) => {
-      btn.addEventListener("click", () => removeMerit(btn.dataset.id, btn));
-    });
-  };
-
-  const renderCustomMeritsList = () => {
-    const container = document.getElementById("custom-merits-list");
-    if (!container) return;
-
-    const customs = currentDb.customMerits ?? [];
-
-    if (customs.length === 0) {
-      container.innerHTML = '<p class="text-muted">Nenhum mérito customizado criado ainda.</p>';
-      return;
-    }
-
-    container.innerHTML = customs.map((mc) => `
-      <div class="manage-item" data-custom-key="${mc.key}">
-        <div class="manage-item__badge">${BadgeGenerator.render(mc, { size: 48 })}</div>
-        <div class="manage-item__info">
-          <span>${mc.emoji} <strong>${mc.title}</strong></span>
-          <span class="text-muted">${mc.description}</span>
-        </div>
-        <button
-          class="btn btn--danger btn--sm"
-          data-action="delete-custom"
-          data-key="${mc.key}"
-          aria-label="Excluir mérito ${mc.title}"
-        >Excluir</button>
-      </div>
-    `).join("");
-
-    container.querySelectorAll("[data-action=delete-custom]").forEach((btn) => {
-      btn.addEventListener("click", () => deleteCustomMerit(btn.dataset.key, btn));
-    });
-  };
-
-  const removeMerit = async (meritId, btn) => {
-    if (!confirm("Remover este mérito? Esta ação não pode ser desfeita.")) return;
-
-    const originalText = btn.textContent;
-    setButtonLoading(btn, true, originalText);
+    const loading = document.getElementById("loading-state");
+    const content = document.getElementById("manage-content");
+    showPage();
 
     try {
-      await GitHubAPI.updateDB((data) => {
-        data.merits = data.merits.filter((m) => m.id !== meritId);
-        return data;
-      }, `fix: remove mérito ${meritId}`);
-
-      const { data } = await GitHubAPI.readDB();
-      currentDb = data;
-      renderManageTab();
+      await loadDB();
+      if (loading) loading.hidden = true;
+      if (content) content.hidden = false;
+      renderRecentMerits();
+      renderCustomMeritsList();
     } catch (err) {
-      alert(`Erro ao remover: ${err.message}`);
-      setButtonLoading(btn, false, originalText);
+      if (loading) loading.hidden = true;
+      alert(`Erro ao carregar: ${err.message}`);
     }
   };
 
-  const deleteCustomMerit = async (key, btn) => {
-    if (!confirm(`Excluir o mérito customizado '${key}'? Os méritos já concedidos com ele serão mantidos no histórico.`)) return;
-
-    const originalText = btn.textContent;
-    setButtonLoading(btn, true, originalText);
-
-    try {
-      await GitHubAPI.updateDB((data) => {
-        data.customMerits = data.customMerits.filter((m) => m.key !== key);
-        return data;
-      }, `fix: remove mérito customizado '${key}'`);
-
-      const { data } = await GitHubAPI.readDB();
-      currentDb = data;
-      populateMeritSelect("grant-merit");
-      renderManageTab();
-    } catch (err) {
-      alert(`Erro ao excluir: ${err.message}`);
-      setButtonLoading(btn, false, originalText);
-    }
-  };
-
-  // --- Tabs ---
-
-  const initTabs = () => {
-    const tabs = document.querySelectorAll(".tab-btn");
-    const panels = document.querySelectorAll(".tab-panel");
-
-    tabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        const target = tab.dataset.tab;
-
-        tabs.forEach((t) => {
-          t.classList.remove("tab-btn--active");
-          t.setAttribute("aria-selected", "false");
-        });
-        panels.forEach((p) => { p.hidden = true; });
-
-        tab.classList.add("tab-btn--active");
-        tab.setAttribute("aria-selected", "true");
-
-        const panel = document.getElementById(`tab-${target}`);
-        if (panel) panel.hidden = false;
-
-        if (target === "manage") renderManageTab();
-      });
-    });
-  };
-
-  const init = async () => {
-    Auth.renderUserBar(document.getElementById("user-bar"));
-
-    try {
-      await Auth.requireLogin();
-    } catch {
-      return; // Usuário fechou o modal sem logar
-    }
-
-    const content = document.getElementById("admin-content");
-    if (content) content.hidden = false;
-
-    Auth.renderUserBar(document.getElementById("user-bar"));
-
-    try {
-      const { data } = await GitHubAPI.readDB();
-      currentDb = data;
-    } catch (err) {
-      alert(`Erro ao carregar dados: ${err.message}`);
-      return;
-    }
-
-    initTabs();
-    initGrantTab();
-    initCreateTab();
-  };
-
-  return { init };
+  return { initHub, initGrant, initCreate, initManage };
 })();
-
-document.addEventListener("DOMContentLoaded", () => AdminPage.init());

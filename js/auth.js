@@ -64,32 +64,90 @@ const Auth = (() => {
     return { success: true, passwordHash };
   };
 
-  // Renderiza a barra de usuário no elemento informado
-  const renderUserBar = (containerEl) => {
+  // Renderiza a barra de usuário — suporta array de users para mostrar foto
+  const renderUserBar = (containerEl, users = []) => {
     if (!containerEl) return;
+
+    // Limpa listener anterior se houver
+    containerEl._cleanupMenu?.();
+
     const user = getCurrentUser();
 
     if (!user) {
       containerEl.innerHTML = `
         <button class="user-bar__btn btn btn--sm btn--secondary" id="ub-login-btn"
-          aria-label="Entrar no sistema">
-          Entrar
-        </button>`;
+          aria-label="Entrar no sistema">Entrar</button>`;
       containerEl.querySelector("#ub-login-btn")?.addEventListener("click", () => {
         showLoginModal().then(() => window.location.reload()).catch(() => {});
       });
-    } else {
-      containerEl.innerHTML = `
-        <div class="user-bar__info">
-          <span class="user-bar__avatar" aria-hidden="true">${user.avatar}</span>
-          <span class="user-bar__name">${user.name}</span>
-        </div>
-        <button class="user-bar__btn btn btn--sm btn--secondary" id="ub-logout-btn"
-          aria-label="Sair da conta">
-          Sair
-        </button>`;
-      containerEl.querySelector("#ub-logout-btn")?.addEventListener("click", logout);
+      return;
     }
+
+    // Avatar: foto do banco ou emoji do perfil
+    const userRecord = users.find((u) => u.memberId === user.memberId);
+    const avatarHtml = userRecord?.avatarDataUrl
+      ? `<img src="${userRecord.avatarDataUrl}" class="avatar-photo" style="width:28px;height:28px;border:none;" alt="" aria-hidden="true" />`
+      : `<span class="user-menu__emoji" aria-hidden="true">${user.avatar}</span>`;
+
+    containerEl.innerHTML = `
+      <div class="user-menu">
+        <button class="user-menu__trigger" aria-haspopup="true" aria-expanded="false"
+          aria-label="Menu de ${user.name}">
+          <span class="user-menu__avatar">${avatarHtml}</span>
+          <span class="user-menu__name">${user.name}</span>
+          <span class="user-menu__chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="user-menu__dropdown" hidden role="menu">
+          <a href="profile.html?id=${user.memberId}" class="user-menu__item" role="menuitem">
+            <span aria-hidden="true">👤</span> Meu Perfil
+          </a>
+          <div class="user-menu__sep" role="separator"></div>
+          <a href="admin-grant.html" class="user-menu__item" role="menuitem">
+            <span aria-hidden="true">🏅</span> Dar Mérito
+          </a>
+          <a href="admin-create.html" class="user-menu__item" role="menuitem">
+            <span aria-hidden="true">✨</span> Criar Mérito
+          </a>
+          <a href="admin-manage.html" class="user-menu__item" role="menuitem">
+            <span aria-hidden="true">🗂️</span> Gerenciar
+          </a>
+          <div class="user-menu__sep" role="separator"></div>
+          <button class="user-menu__item user-menu__item--danger" id="ub-logout-btn" role="menuitem">
+            <span aria-hidden="true">🚪</span> Sair
+          </button>
+        </div>
+      </div>`;
+
+    const trigger  = containerEl.querySelector(".user-menu__trigger");
+    const dropdown = containerEl.querySelector(".user-menu__dropdown");
+
+    const toggleMenu = (open) => {
+      dropdown.hidden = !open;
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleMenu(dropdown.hidden);
+    });
+
+    const closeOnOutside = (e) => {
+      if (!containerEl.contains(e.target)) toggleMenu(false);
+    };
+    const closeOnEsc = (e) => {
+      if (e.key === "Escape") toggleMenu(false);
+    };
+
+    document.addEventListener("click", closeOnOutside);
+    document.addEventListener("keydown", closeOnEsc);
+
+    // Permite limpeza quando renderUserBar for chamada novamente
+    containerEl._cleanupMenu = () => {
+      document.removeEventListener("click", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEsc);
+    };
+
+    containerEl.querySelector("#ub-logout-btn")?.addEventListener("click", logout);
   };
 
   // Constrói e exibe o modal de login/registro
