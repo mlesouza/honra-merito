@@ -8,5 +8,15 @@
   ],
   "members": [],
   "customMerits": [],
-  "merits": []
+  "merits": [
+    {
+      "id": "bef35964-7968-4261-9bdb-c1cfa963c0ef",
+      "recipientId": "paloma",
+      "meritKey": "testador_producao",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T05:13:01.277Z"
+    }
+  ]
 }
