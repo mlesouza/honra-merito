@@ -143,6 +143,15 @@
       "givenById": "marcelo",
       "reason": "Resolveu o bug com um console.log e nunca removeu",
       "timestamp": "2026-03-21T11:47:30.046Z"
+    },
+    {
+      "id": "e97d2ad3-2481-41d3-a9e3-62733bf277bb",
+      "recipientId": "marcelo",
+      "meritKey": "ninja_das_tarefas",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:48:09.772Z"
     }
   ]
 }
