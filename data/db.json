@@ -242,6 +242,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T12:27:37.771Z"
+    },
+    {
+      "id": "a646ae4d-b03b-49ac-88df-778fda33cbcd",
+      "recipientId": "marcelo",
+      "meritKey": "mestre_magos",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T12:27:55.830Z"
     }
   ]
 }
