@@ -1410,28 +1410,77 @@ img, svg { display: block; max-width: 100%; }
   to { transform: rotate(360deg); }
 }
 
-/* Teaser de conquistas secretas — exibido abaixo do showcase */
-.secret-teaser {
+/* Botão de segredos — ao lado do título da seção */
+.section__header-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-top: var(--space-6);
-  padding: var(--space-3) var(--space-5);
-  border: 1px dashed var(--border);
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+.section__header-row .section__title {
+  margin-bottom: 0;
+}
+.secret-hint-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-2);
+  border: 1px dashed color-mix(in srgb, var(--text-muted) 50%, transparent);
   border-radius: var(--radius-full);
-  width: fit-content;
-  margin-inline: auto;
-  opacity: 0.55;
-}
-.secret-teaser__icon {
-  font-size: 1.1rem;
-}
-.secret-teaser__text {
-  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background var(--transition-md), border-color var(--transition-md);
+  color: var(--text-muted);
   font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.secret-hint-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+.secret-hint-btn__icon {
+  font-size: 1rem;
+}
+
+/* Modal de lista de segredos */
+.badge-modal--secrets {
+  max-width: 420px;
+}
+.secrets-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.secrets-modal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.secrets-modal-item__lock {
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.secrets-modal-item__hint {
+  font-size: 0.82rem;
   color: var(--text-muted);
   font-style: italic;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Ícone do modal de segredos */
+.badge-modal__icon--secret {
+  background: color-mix(in srgb, #888 15%, transparent) !important;
+  border-color: color-mix(in srgb, #888 40%, transparent) !important;
+  box-shadow: none !important;
 }
 
 .badge-showcase-item {

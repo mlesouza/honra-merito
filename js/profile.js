@@ -132,6 +132,49 @@ const ProfilePage = (() => {
     }
   };
 
+  // Modal com lista de conquistas secretas bloqueadas (dicas sem revelar nomes)
+  const showSecretsModal = (lockedSecrets) => {
+    const existing = document.getElementById("badge-detail-modal");
+    if (existing) existing.remove();
+
+    const items = lockedSecrets.map((sm) => `
+      <div class="secrets-modal-item">
+        <span class="secrets-modal-item__lock">🔒</span>
+        <p class="secrets-modal-item__hint">${sm.hint}</p>
+      </div>
+    `).join("");
+
+    const modal = document.createElement("div");
+    modal.id = "badge-detail-modal";
+    modal.className = "badge-modal-overlay";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-label", "Conquistas secretas");
+    modal.innerHTML = `
+      <div class="badge-modal badge-modal--secrets">
+        <button class="badge-modal__close" aria-label="Fechar">✕</button>
+        <div class="badge-modal__icon badge-modal__icon--secret">
+          <span class="badge-modal__emoji">🔮</span>
+        </div>
+        <div class="badge-modal__body">
+          <h2 class="badge-modal__title">Conquistas Secretas</h2>
+          <p class="badge-modal__desc">Existem <strong>${lockedSecrets.length}</strong> conquistas ocultas esperando por você. Aqui vão algumas pistas...</p>
+          <div class="secrets-modal-list">${items}</div>
+        </div>
+      </div>
+    `;
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal || e.target.closest(".badge-modal__close")) modal.remove();
+    });
+    document.addEventListener("keydown", function onKey(e) {
+      if (e.key === "Escape") { modal.remove(); document.removeEventListener("keydown", onKey); }
+    });
+
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => modal.classList.add("badge-modal-overlay--visible"));
+  };
+
   // Modal de detalhe do badge
   const showBadgeModal = (mc, count) => {
     const existing = document.getElementById("badge-detail-modal");
@@ -208,47 +251,52 @@ const ProfilePage = (() => {
         </div>`;
     }).join("");
 
-    // Badges secretos — só aparecem quando desbloqueados (surpresa total)
+    // Badges secretos — apenas desbloqueados aparecem no grid
     const unlockedSecretItems = evaluatedSecrets
       .filter((sm) => sm.unlocked)
       .map((sm) => `
         <div class="badge-showcase-item badge-showcase-item--secret"
              role="button" tabindex="0" aria-label="${sm.title}"
-             data-merit-key="${sm.key}">
+             data-secret-key="${sm.key}">
           <div class="secret-rainbow-ring">
             ${BadgeGenerator.render(sm, { size: 130, locked: false, count: 1 })}
           </div>
         </div>`)
       .join("");
 
-    const lockedCount = evaluatedSecrets.filter((sm) => !sm.unlocked).length;
-    const teaserEl = lockedCount > 0
-      ? `<div class="secret-teaser" aria-label="Há conquistas ocultas">
-           <span class="secret-teaser__icon">🔮</span>
-           <span class="secret-teaser__text">Dizem que existem conquistas secretas por aqui...</span>
-         </div>`
-      : "";
-
     container.innerHTML = regularItems + unlockedSecretItems;
 
-    // Teaser aparece fora do grid, abaixo dele
-    const existingTeaser = document.getElementById("secret-teaser-wrap");
-    if (existingTeaser) existingTeaser.remove();
-    if (teaserEl) {
-      const wrap = document.createElement("div");
-      wrap.id = "secret-teaser-wrap";
-      wrap.innerHTML = teaserEl;
-      container.insertAdjacentElement("afterend", wrap);
+    // Botão de segredos — mostra quantos faltam
+    const lockedSecrets = evaluatedSecrets.filter((sm) => !sm.unlocked);
+    const hintBtn = document.getElementById("secret-hint-btn");
+    if (hintBtn) {
+      if (lockedSecrets.length > 0) {
+        hintBtn.hidden = false;
+        hintBtn.querySelector(".secret-hint-btn__label").textContent =
+          `${lockedSecrets.length} segredo${lockedSecrets.length > 1 ? "s" : ""}`;
+        hintBtn.onclick = () => showSecretsModal(lockedSecrets);
+      } else {
+        hintBtn.hidden = true;
+      }
     }
 
+    // Badges regulares
     container.querySelectorAll(".badge-showcase-item[data-merit-key]").forEach((el) => {
       const key = el.dataset.meritKey;
-      const secretMc = evaluatedSecrets.find((sm) => sm.key === key);
-      const mc = secretMc ?? allMeritsConfig.find((m) => m.key === key);
+      const mc = allMeritsConfig.find((m) => m.key === key);
       if (!mc) return;
-      const count = meritCounts[key] ?? (secretMc?.unlocked ? 1 : 0);
+      const count = meritCounts[key] ?? 0;
       el.addEventListener("click", () => showBadgeModal(mc, count));
       el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") showBadgeModal(mc, count); });
+    });
+
+    // Badges secretos desbloqueados
+    container.querySelectorAll(".badge-showcase-item[data-secret-key]").forEach((el) => {
+      const key = el.dataset.secretKey;
+      const sm = evaluatedSecrets.find((s) => s.key === key);
+      if (!sm) return;
+      el.addEventListener("click", () => showBadgeModal(sm, 1));
+      el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") showBadgeModal(sm, 1); });
     });
   };
 
