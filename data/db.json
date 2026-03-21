@@ -7,7 +7,34 @@
     }
   ],
   "members": [],
-  "customMerits": [],
+  "customMerits": [
+    {
+      "key": "o_rei_das_desculpas",
+      "emoji": "👑",
+      "title": "O Rei das desculpas",
+      "description": "sempre tem uma desculpa",
+      "badge": {
+        "backgroundColor": "#120704",
+        "borderColor": "#ff6b35",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-21T11:15:22.139Z"
+    },
+    {
+      "key": "ninja_das_tarefas",
+      "emoji": "🥷",
+      "title": "Ninja das Tarefas",
+      "description": "Entrega tarefa como ninguém",
+      "badge": {
+        "backgroundColor": "#00120e",
+        "borderColor": "#00ffcc",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-21T11:22:10.750Z"
+    }
+  ],
   "merits": [
     {
       "id": "c48475c6-2588-46d1-9220-d429373cfce9",
@@ -17,6 +44,42 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T06:13:48.227Z"
+    },
+    {
+      "id": "9e17d01f-7216-4b3a-bd2e-697be49ed555",
+      "recipientId": "leandro",
+      "meritKey": "senhor_cache",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:17:53.047Z"
+    },
+    {
+      "id": "1e87bae9-d653-4828-b5d7-32441bd858c0",
+      "recipientId": "arthur",
+      "meritKey": "sobrevivente_mysql",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:34:54.873Z"
+    },
+    {
+      "id": "c2960fc3-ae7d-462f-8580-08e85119c12a",
+      "recipientId": "victor",
+      "meritKey": "ctrl_c_ctrl_v",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:35:09.499Z"
+    },
+    {
+      "id": "160025da-ef90-40a4-813a-67bd11e05949",
+      "recipientId": "tanaka",
+      "meritKey": "ninja_das_tarefas",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:36:10.214Z"
     }
   ]
 }
