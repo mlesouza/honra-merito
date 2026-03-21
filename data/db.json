@@ -33,6 +33,19 @@
         "shape": "hexagon"
       },
       "createdAt": "2026-03-21T11:22:10.750Z"
+    },
+    {
+      "key": "resolvedor_de_producao",
+      "emoji": "🛠️",
+      "title": "Resolvedor de Produção",
+      "description": "Só sobe código direto em produção",
+      "badge": {
+        "backgroundColor": "#11040a",
+        "borderColor": "#f43f8e",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-21T11:59:28.614Z"
     }
   ],
   "merits": [
