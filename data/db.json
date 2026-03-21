@@ -7,7 +7,21 @@
     }
   ],
   "members": [],
-  "customMerits": [],
+  "customMerits": [
+    {
+      "key": "ninja_das_tarefas",
+      "emoji": "🥷",
+      "title": "Ninja das Tarefas",
+      "description": "Entrega as tarefas igual um ninja",
+      "badge": {
+        "backgroundColor": "#0d1117",
+        "borderColor": "#000501",
+        "textColor": "#e6edf3",
+        "shape": "star8"
+      },
+      "createdAt": "2026-03-21T10:59:04.396Z"
+    }
+  ],
   "merits": [
     {
       "id": "c48475c6-2588-46d1-9220-d429373cfce9",
