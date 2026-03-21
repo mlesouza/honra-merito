@@ -26,6 +26,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T05:15:43.712Z"
+    },
+    {
+      "id": "c9115ee1-9111-42af-9161-04bbb9fd808f",
+      "recipientId": "marcelo",
+      "meritKey": "ctrl_c_ctrl_v",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T05:16:56.202Z"
     }
   ]
 }
