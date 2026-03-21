@@ -206,6 +206,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T12:11:33.615Z"
+    },
+    {
+      "id": "14c8783e-c1cc-4efd-a1ce-55148dfa16cc",
+      "recipientId": "marcelo",
+      "meritKey": "rework_qualidade",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T12:13:28.776Z"
     }
   ]
 }
