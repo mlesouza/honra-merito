@@ -215,6 +215,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T12:13:28.776Z"
+    },
+    {
+      "id": "bc743363-ea61-4d3f-a3d2-0a8df04d7efd",
+      "recipientId": "marcelo",
+      "meritKey": "inimigo_qa",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T12:14:52.766Z"
     }
   ]
 }
