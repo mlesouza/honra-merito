@@ -188,6 +188,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T11:56:06.196Z"
+    },
+    {
+      "id": "8871e40b-0e34-4fb5-8330-391ed1926112",
+      "recipientId": "marcelo",
+      "meritKey": "refatorador_infinito",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:56:26.017Z"
     }
   ]
 }
