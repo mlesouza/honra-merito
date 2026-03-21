@@ -17,15 +17,6 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T06:13:48.227Z"
-    },
-    {
-      "id": "fcdc06c0-f9d9-4832-b43c-aa2f52d18394",
-      "recipientId": "tanaka",
-      "meritKey": "ninja_das_tarefas",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T10:59:28.815Z"
     }
   ]
 }
