@@ -1,5 +1,10 @@
 {
-  "users": [],
+  "users": [
+    {
+      "memberId": "marcelo",
+      "passwordHash": "db1f87649d1e48643b90bf5baa00b40249ce856b6f0a7fceacc28f1b520ff56c"
+    }
+  ],
   "members": [],
   "customMerits": [],
   "merits": []
