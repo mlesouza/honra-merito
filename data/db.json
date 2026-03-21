@@ -9,19 +9,6 @@
   "members": [],
   "customMerits": [
     {
-      "key": "o_rei_das_desculpas",
-      "emoji": "👑",
-      "title": "O Rei das desculpas",
-      "description": "sempre tem uma desculpa",
-      "badge": {
-        "backgroundColor": "#120704",
-        "borderColor": "#ff6b35",
-        "textColor": "#e6edf3",
-        "shape": "hexagon"
-      },
-      "createdAt": "2026-03-21T11:15:22.139Z"
-    },
-    {
       "key": "ninja_das_tarefas",
       "emoji": "🥷",
       "title": "Ninja das Tarefas",
