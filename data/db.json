@@ -20,6 +20,19 @@
         "shape": "hexagon"
       },
       "createdAt": "2026-03-21T11:15:22.139Z"
+    },
+    {
+      "key": "ninja_das_tarefas",
+      "emoji": "🥷",
+      "title": "Ninja das Tarefas",
+      "description": "Entrega tarefa como ninguém",
+      "badge": {
+        "backgroundColor": "#00120e",
+        "borderColor": "#00ffcc",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-21T11:22:10.750Z"
     }
   ],
   "merits": [
