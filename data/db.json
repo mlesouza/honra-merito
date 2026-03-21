@@ -7,7 +7,21 @@
     }
   ],
   "members": [],
-  "customMerits": [],
+  "customMerits": [
+    {
+      "key": "o_rei_das_desculpas",
+      "emoji": "👑",
+      "title": "O Rei das desculpas",
+      "description": "sempre tem uma desculpa",
+      "badge": {
+        "backgroundColor": "#120704",
+        "borderColor": "#ff6b35",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-21T11:15:22.139Z"
+    }
+  ],
   "merits": [
     {
       "id": "c48475c6-2588-46d1-9220-d429373cfce9",
