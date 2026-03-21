@@ -17,6 +17,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T05:13:01.277Z"
+    },
+    {
+      "id": "2d331682-f9ba-40a5-9bd4-61ae7ce57f94",
+      "recipientId": "paloma",
+      "meritKey": "testador_producao",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T05:15:43.712Z"
     }
   ]
 }
