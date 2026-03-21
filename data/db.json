@@ -197,6 +197,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T12:07:55.137Z"
+    },
+    {
+      "id": "3c404624-b085-4426-b077-5a0ccd4f9ca8",
+      "recipientId": "marcelo",
+      "meritKey": "rapaz_ta_certo",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T12:11:33.615Z"
     }
   ]
 }
