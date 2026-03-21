@@ -9,15 +9,6 @@
   "customMerits": [],
   "merits": [
     {
-      "id": "3dd5f19a-257b-4aa0-bd1f-5aac6189bae5",
-      "recipientId": "su",
-      "meritKey": "works_on_my_machine",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T04:53:26.044Z"
-    },
-    {
       "id": "f18510ec-b360-437d-b395-e674ea353707",
       "recipientId": "paloma",
       "meritKey": "works_on_my_machine",
