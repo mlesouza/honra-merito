@@ -34,7 +34,8 @@ const GitHubAPI = (() => {
   const fetchFile = async (path = DB_PATH) => {
     const response = await fetch(buildUrl(path), {
       method: "GET",
-      headers: buildHeaders()
+      headers: buildHeaders(),
+      cache: "no-store"
     });
 
     if (!response.ok) {
@@ -42,7 +43,10 @@ const GitHubAPI = (() => {
     }
 
     const file = await response.json();
-    const content = JSON.parse(atob(file.content.replace(/\n/g, "")));
+    const raw = file.content.replace(/\n/g, "");
+    // Decodifica base64 → bytes → UTF-8 (suporta emojis e caracteres multi-byte)
+    const bytes = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
+    const content = JSON.parse(new TextDecoder().decode(bytes));
     return { data: content, sha: file.sha };
   };
 

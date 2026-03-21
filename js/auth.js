@@ -25,7 +25,9 @@ const Auth = (() => {
 
   const logout = () => {
     sessionStorage.removeItem(SESSION_KEY);
-    window.location.reload();
+    // Navega para a raiz em vez de reload para garantir limpeza de bfcache
+    const root = window.location.pathname.split("/").slice(0, -1).join("/") + "/index.html";
+    window.location.replace(root);
   };
 
   const login = async (dbData, memberId, password) => {

@@ -272,13 +272,14 @@ const App = (() => {
     }
 
     const maxCount = sorted[0][1];
+    const pcts = [];
     container.innerHTML = sorted.map(([key, count], i) => {
       const mc = allMerits.find((m) => m.key === key);
-      if (!mc) return "";
+      if (!mc) { pcts.push(0); return ""; }
       const pct = Math.round((count / maxCount) * 100);
-      const delay = i * 60;
+      pcts.push(pct);
       return `
-        <div class="merit-pop-item" data-reveal style="animation-delay:${delay}ms">
+        <div class="merit-pop-item anim-fade-up" style="animation-delay:${i * 55}ms">
           <div class="merit-pop-item__badge">${BadgeGenerator.render(mc, { size: 38, showLabel: false })}</div>
           <div class="merit-pop-item__info">
             <div class="merit-pop-item__top">
@@ -286,11 +287,18 @@ const App = (() => {
               <span class="merit-pop-item__count">${count}×</span>
             </div>
             <div class="merit-pop-item__bar-track">
-              <div class="merit-pop-item__bar-fill" style="width:${pct}%;transition-delay:${delay + 200}ms"></div>
+              <div class="merit-pop-item__bar-fill" data-pct="${pct}"></div>
             </div>
           </div>
         </div>`;
     }).join("");
+
+    // Anima as barras no próximo frame (garante transição CSS)
+    requestAnimationFrame(() => {
+      container.querySelectorAll(".merit-pop-item__bar-fill").forEach((el, i) => {
+        setTimeout(() => { el.style.width = `${pcts[i] ?? 0}%`; }, i * 55 + 100);
+      });
+    });
   };
 
   // ——— Top Dadores ——————————————————————————————————————
@@ -327,7 +335,7 @@ const App = (() => {
         : `<span class="avatar-emoji" style="font-size:1.2rem">🧑‍💻</span>`;
       const profileHref = g.id ? `profile.html?id=${g.id}` : "#";
       return `
-        <a href="${profileHref}" class="giver-row" data-reveal style="animation-delay:${i * 55}ms"
+        <a href="${profileHref}" class="giver-row anim-fade-up" style="animation-delay:${i * 55}ms"
            aria-label="${g.name} deu ${g.count} mérito${g.count !== 1 ? "s" : ""}">
           <span class="giver-row__rank">#${i + 1}</span>
           <div class="giver-row__avatar">${avatarHtml}</div>
