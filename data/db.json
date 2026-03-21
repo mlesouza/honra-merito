@@ -161,6 +161,15 @@
       "givenById": "marcelo",
       "reason": "Passou 3 horas num bug que era ponto e vírgula",
       "timestamp": "2026-03-21T11:55:09.709Z"
+    },
+    {
+      "id": "e3c326d2-9514-4357-ba10-9928f4fdc565",
+      "recipientId": "marcelo",
+      "meritKey": "senhor_cache",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-21T11:55:29.821Z"
     }
   ]
 }
