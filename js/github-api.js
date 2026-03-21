@@ -6,12 +6,15 @@
 const GitHubAPI = (() => {
   const DB_PATH = "data/db.json";
 
-  const buildHeaders = () => ({
-    "Authorization": `Bearer ${CONFIG.GITHUB_PAT}`,
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "Content-Type": "application/json"
-  });
+  const buildHeaders = () => {
+    const headers = {
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "Content-Type": "application/json"
+    };
+    if (CONFIG.GITHUB_PAT) headers["Authorization"] = `Bearer ${CONFIG.GITHUB_PAT}`;
+    return headers;
+  };
 
   const buildUrl = (path) =>
     `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${path}`;
