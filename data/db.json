@@ -17,15 +17,6 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T06:04:59.500Z"
-    },
-    {
-      "id": "1826a1aa-45f6-4f78-b175-1ed00e7d1b36",
-      "recipientId": "pedro",
-      "meritKey": "sobrevivente_mysql",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T06:11:44.134Z"
     }
   ]
 }
