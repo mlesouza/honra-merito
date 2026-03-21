@@ -125,6 +125,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T11:42:17.367Z"
+    },
+    {
+      "id": "b5270aca-f744-49a4-b990-a04328276875",
+      "recipientId": "marcelo",
+      "meritKey": "testador_producao",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": "Colocou credencial hardcoded e commitou no repositório público",
+      "timestamp": "2026-03-21T11:44:52.237Z"
     }
   ]
 }
