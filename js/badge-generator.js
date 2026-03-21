@@ -96,10 +96,10 @@ const BadgeGenerator = (() => {
 
     const filterId = `glow-${meritConfig.key ?? Math.random().toString(36).slice(2)}`;
     const half = size / 2;
-    const emojiSize = size * 0.32;
-    const fontSize = size * 0.095;
-    const emojiY = half - size * 0.05;
-    const textY = half + size * 0.26;
+    const emojiSize = size * 0.30;
+    const fontSize = size * 0.092;
+    const emojiY = half - size * 0.10;
+    const textY = half + size * 0.20;
     const maxChars = Math.floor(size / 8.5);
 
     const shapeSvg = getShapePath(shape, size);
@@ -121,6 +121,7 @@ const BadgeGenerator = (() => {
       width="${size}"
       height="${size}"
       viewBox="0 0 ${size} ${size}"
+      overflow="visible"
       role="img"
       aria-label="${escapeXml(title)}: ${escapeXml(meritConfig.description ?? "")}"
       data-merit-key="${escapeXml(meritConfig.key ?? "")}"

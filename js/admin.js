@@ -77,6 +77,15 @@ const AdminPage = (() => {
     populateMemberSelect("grant-member");
     populateMeritSelect("grant-merit");
 
+    // Exibe o nome do usuário logado como "dado por"
+    const currentUser = Auth.getCurrentUser();
+    const giverDisplay = document.getElementById("grant-giver-display");
+    if (giverDisplay && currentUser) {
+      giverDisplay.innerHTML = `
+        <span class="giver-display__avatar">${currentUser.avatar}</span>
+        <span class="giver-display__name">${currentUser.name}</span>`;
+    }
+
     const form = document.getElementById("grant-form");
     if (!form) return;
 
@@ -88,15 +97,10 @@ const AdminPage = (() => {
       const recipientId = sanitizeText(document.getElementById("grant-member").value);
       const meritKey = sanitizeText(document.getElementById("grant-merit").value);
       const reason = sanitizeText(document.getElementById("grant-reason").value);
-      const givenBy = sanitizeText(document.getElementById("grant-giver").value);
+      const givenBy = Auth.getCurrentUser()?.name ?? "Anônimo";
 
       if (!recipientId || !meritKey) {
         showStatus("grant-status", "Preencha o membro e o mérito.", "error");
-        return;
-      }
-
-      if (givenBy.length === 0) {
-        showStatus("grant-status", "Informe seu nome (quem está dando o mérito).", "error");
         return;
       }
 
@@ -112,12 +116,14 @@ const AdminPage = (() => {
       }
 
       try {
+        const currentUserId = Auth.getCurrentUser()?.memberId ?? null;
         await GitHubAPI.updateDB((data) => {
           data.merits.push({
             id: generateUUID(),
             recipientId,
             meritKey,
-            givenBy: givenBy || "Anônimo",
+            givenBy,
+            givenById: currentUserId,
             reason: reason || null,
             timestamp: new Date().toISOString()
           });
@@ -269,10 +275,15 @@ const AdminPage = (() => {
       return;
     }
 
+    const currentUserId = Auth.getCurrentUser()?.memberId;
+
     container.innerHTML = recent.map((merit) => {
       const member = allMembers.find((m) => m.id === merit.recipientId);
       const mc = getAllMeritsConfig().find((m) => m.key === merit.meritKey);
       if (!member || !mc) return "";
+
+      // Só quem deu o mérito pode remover
+      const canRemove = merit.givenById === currentUserId;
 
       return `
         <div class="manage-item" data-merit-id="${merit.id}">
@@ -280,12 +291,13 @@ const AdminPage = (() => {
             <span>${mc.emoji} <strong>${mc.title}</strong> → ${member.avatar} ${member.name}</span>
             <span class="text-muted">${merit.reason ? `"${merit.reason}" · ` : ""}por ${merit.givenBy ?? "Anônimo"} · ${formatDate(merit.timestamp)}</span>
           </div>
+          ${canRemove ? `
           <button
             class="btn btn--danger btn--sm"
             data-action="remove-merit"
             data-id="${merit.id}"
             aria-label="Remover mérito de ${member.name}"
-          >Remover</button>
+          >Remover</button>` : `<span class="manage-item__owner-lock" title="Apenas quem deu este mérito pode removê-lo">🔒</span>`}
         </div>
       `;
     }).join("");
@@ -398,7 +410,18 @@ const AdminPage = (() => {
   };
 
   const init = async () => {
-    await Auth.requireAuth();
+    Auth.renderUserBar(document.getElementById("user-bar"));
+
+    try {
+      await Auth.requireLogin();
+    } catch {
+      return; // Usuário fechou o modal sem logar
+    }
+
+    const content = document.getElementById("admin-content");
+    if (content) content.hidden = false;
+
+    Auth.renderUserBar(document.getElementById("user-bar"));
 
     try {
       const { data } = await GitHubAPI.readDB();

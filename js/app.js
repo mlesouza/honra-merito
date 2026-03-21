@@ -5,7 +5,6 @@
 
 const App = (() => {
   const FEED_PAGE_SIZE = 20;
-  let allMerits = [];
   let feedOffset = 0;
   let db = null;
 
@@ -77,6 +76,45 @@ const App = (() => {
       .join("") || '<p class="text-muted">Nenhum membro configurado ainda.</p>';
   };
 
+  const removeMeritFromFeed = async (meritId, articleEl) => {
+    try {
+      await Auth.requireLogin();
+    } catch {
+      return; // Usuário cancelou o login
+    }
+
+    // Só quem deu o mérito pode apagar
+    const currentUserId = Auth.getCurrentUser()?.memberId;
+    const merit = db?.merits?.find((m) => m.id === meritId);
+    if (merit && merit.givenById && merit.givenById !== currentUserId) {
+      alert("Apenas quem deu este mérito pode apagá-lo.");
+      return;
+    }
+
+    if (!confirm("Apagar este mérito? A ação não pode ser desfeita.")) return;
+
+    articleEl.style.opacity = "0.4";
+    articleEl.style.pointerEvents = "none";
+
+    try {
+      await GitHubAPI.updateDB((data) => {
+        data.merits = data.merits.filter((m) => m.id !== meritId);
+        return data;
+      }, `fix: remove mérito ${meritId}`);
+
+      articleEl.remove();
+
+      // Atualiza ranking
+      const { data } = await GitHubAPI.readDB();
+      db = data;
+      renderRanking(data);
+    } catch (err) {
+      alert(`Erro ao apagar: ${err.message}`);
+      articleEl.style.opacity = "";
+      articleEl.style.pointerEvents = "";
+    }
+  };
+
   // Renderiza um item do feed
   const renderFeedItem = (merit, customMerits) => {
     const member = findMember(merit.recipientId);
@@ -89,7 +127,7 @@ const App = (() => {
       : "";
 
     return `
-      <article class="feed-item" aria-label="Mérito concedido a ${member.name}">
+      <article class="feed-item" data-merit-id="${merit.id}" aria-label="Mérito concedido a ${member.name}">
         <div class="feed-item__icon">${meritConfig.emoji}</div>
         <div class="feed-item__body">
           <div class="feed-item__header">
@@ -102,6 +140,13 @@ const App = (() => {
             <time class="feed-item__date" datetime="${merit.timestamp}">${formatDate(merit.timestamp)}</time>
           </div>
         </div>
+        <button
+          class="feed-item__delete"
+          data-action="delete-merit"
+          data-id="${merit.id}"
+          aria-label="Apagar mérito de ${member.name}"
+          title="Apagar mérito"
+        >🗑️</button>
       </article>
     `;
   };
@@ -151,6 +196,7 @@ const App = (() => {
   };
 
   const init = async () => {
+    Auth.renderUserBar(document.getElementById("user-bar"));
     showLoading(true);
 
     try {
@@ -158,10 +204,18 @@ const App = (() => {
       db = data;
       renderRanking(data);
       renderFeed(data, true);
-      allMerits = data.merits;
 
       const loadMoreBtn = document.getElementById("feed-load-more");
       loadMoreBtn?.addEventListener("click", () => renderFeed(data));
+
+      // Delegação de eventos para os botões de apagar no feed
+      const feedList = document.getElementById("feed-list");
+      feedList?.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action='delete-merit']");
+        if (!btn) return;
+        const article = btn.closest("article[data-merit-id]");
+        if (article) removeMeritFromFeed(btn.dataset.id, article);
+      });
     } catch (err) {
       showError(err.message);
     } finally {

@@ -79,10 +79,16 @@ img, svg { display: block; }
 .site-header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  padding: var(--space-5) 0;
+  padding: var(--space-4) 0;
   position: sticky;
   top: 0;
   z-index: 100;
+}
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 .site-header__title {
   font-size: 1.5rem;
@@ -95,6 +101,26 @@ img, svg { display: block; }
   font-size: 0.875rem;
   margin-top: var(--space-1);
 }
+
+/* --- User Bar --- */
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+.user-bar__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.user-bar__avatar { font-size: 1.2rem; }
+.user-bar__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+.user-bar__btn { white-space: nowrap; }
 
 /* --- Breadcrumb --- */
 .breadcrumb {
@@ -276,6 +302,25 @@ img, svg { display: block; }
   font-family: var(--font-mono);
   flex-wrap: wrap;
 }
+.feed-item__delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: opacity var(--transition), background var(--transition);
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.feed-item:hover .feed-item__delete {
+  opacity: 0.4;
+}
+.feed-item__delete:hover {
+  opacity: 1 !important;
+  background: rgba(248,81,73,0.15);
+}
 .feed-actions {
   margin-top: var(--space-4);
   text-align: center;
@@ -398,35 +443,86 @@ img, svg { display: block; }
   flex-wrap: wrap;
 }
 
-/* --- Admin: Auth Overlay --- */
-.auth-overlay {
+/* --- Auth Modal (login/registro) --- */
+#auth-modal {
   position: fixed;
   inset: 0;
-  background: rgba(13,17,23,0.95);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
 }
-.auth-box {
+.auth-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(13,17,23,0.85);
+}
+.auth-modal__box {
+  position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
+  overflow: hidden;
+  animation: modal-in 0.2s ease;
 }
-.auth-box__title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: var(--space-2);
+@keyframes modal-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
 }
-.auth-box__subtitle {
+.auth-modal__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
   color: var(--color-text-muted);
-  font-size: 0.875rem;
-  margin-bottom: var(--space-6);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: var(--space-4);
+  transition: color var(--transition), border-color var(--transition);
+  margin-bottom: -1px;
 }
-.auth-form { display: flex; flex-direction: column; gap: var(--space-4); }
+.auth-tab:hover { color: var(--color-text); }
+.auth-tab--active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+.auth-tab-panel { padding: var(--space-6); }
+.auth-modal__hint {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-5);
+  line-height: 1.5;
+}
+
+/* Giver display no form de conceder mérito */
+.giver-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.95rem;
+}
+.giver-display__avatar { font-size: 1.2rem; }
+.giver-display__name { font-weight: 500; }
+
+/* Lock icon na lista de gerenciar */
+.manage-item__owner-lock {
+  font-size: 0.9rem;
+  opacity: 0.4;
+  flex-shrink: 0;
+  title: "Apenas quem deu este mérito pode removê-lo";
+}
 
 /* --- Admin: Header --- */
 .admin-header {

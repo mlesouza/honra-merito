@@ -94,6 +94,7 @@ const ProfilePage = (() => {
   };
 
   const init = async () => {
+    Auth.renderUserBar(document.getElementById("user-bar"));
     const memberId = getMemberId();
     showLoading(true);
 

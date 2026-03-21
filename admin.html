@@ -8,24 +8,21 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="container">
+    <div class="container site-header__inner">
       <nav class="breadcrumb">
         <a href="index.html" class="breadcrumb__link">🏆 Honra ao Mérito</a>
         <span class="breadcrumb__sep" aria-hidden="true">/</span>
         <span class="breadcrumb__current">Admin</span>
       </nav>
+      <div id="user-bar" class="user-bar"></div>
     </div>
   </header>
 
-  <!-- Overlay de autenticação (bloqueia o conteúdo) -->
-  <div id="auth-overlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <!-- Overlay de autenticação — mantido apenas como fallback estrutural, nunca visível -->
+  <div id="auth-overlay" hidden>
     <div class="auth-box">
-      <h2 class="auth-box__title" id="auth-title">🔐 Área Restrita</h2>
-      <p class="auth-box__subtitle">Digite a senha da equipe para acessar o painel de admin.</p>
-      <form id="auth-form" class="auth-form" method="post" action="javascript:void(0)" novalidate>
-        <div class="form-group">
-          <label for="auth-password" class="form-label">Senha da equipe</label>
-          <input
+      <form id="auth-form" action="javascript:void(0)" method="post" novalidate>
+        <input
             type="password"
             id="auth-password"
             name="password"
@@ -42,7 +39,7 @@
     </div>
   </div>
 
-  <!-- Conteúdo protegido -->
+  <!-- Conteúdo principal (visível após login via auth.js) -->
   <main class="container" id="admin-content" hidden>
 
     <div class="admin-header">
@@ -111,18 +108,10 @@
             <span id="grant-reason-hint" class="form-hint">Máximo 300 caracteres</span>
           </div>
 
+          <!-- "Dado por" preenchido automaticamente pelo usuário logado -->
           <div class="form-group">
-            <label for="grant-giver" class="form-label">Seu nome (quem está dando) <span class="required" aria-hidden="true">*</span></label>
-            <input
-              type="text"
-              id="grant-giver"
-              name="giver"
-              class="form-input"
-              placeholder="Digite seu nome..."
-              maxlength="100"
-              required
-              aria-required="true"
-            />
+            <label class="form-label">Dado por</label>
+            <div id="grant-giver-display" class="giver-display" aria-live="polite"></div>
           </div>
 
           <div id="grant-status" class="status-message" hidden aria-live="polite"></div>
