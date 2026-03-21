@@ -175,6 +175,13 @@ const ProfilePage = (() => {
     requestAnimationFrame(() => modal.classList.add("badge-modal-overlay--visible"));
   };
 
+  // Avalia quais méritos secretos estão desbloqueados
+  const evalSecretMerits = (meritCounts, allMeritsConfig, totalMerits, uniqueGivers, memberMerits) => {
+    const allRegularKeys = allMeritsConfig.filter((m) => !m.secret).map((m) => m.key);
+    const ctx = { meritCounts, allRegularKeys, totalMerits, uniqueGivers, memberMerits };
+    return SECRET_MERITS.map((sm) => ({ ...sm, unlocked: sm.condition(ctx) }));
+  };
+
   // Renderiza a vitrine de badges (desbloqueados e bloqueados)
   const renderBadgeShowcase = (memberMerits, allMeritsConfig) => {
     const container = document.getElementById("badge-showcase");
@@ -185,25 +192,61 @@ const ProfilePage = (() => {
       meritCounts[merit.meritKey] = (meritCounts[merit.meritKey] ?? 0) + 1;
     }
 
-    container.innerHTML = allMeritsConfig.map((mc) => {
+    const totalMerits = memberMerits.length;
+    const uniqueGivers = new Set(memberMerits.map((m) => m.givenById ?? m.givenBy ?? "anon")).size;
+    const evaluatedSecrets = evalSecretMerits(meritCounts, allMeritsConfig, totalMerits, uniqueGivers, memberMerits);
+
+    const regularItems = allMeritsConfig.filter((m) => !m.secret).map((mc) => {
       const count = meritCounts[mc.key] ?? 0;
       const locked = count === 0;
       const badgeSvg = BadgeGenerator.render(mc, { size: 130, locked, count });
-
       return `
         <div class="badge-showcase-item ${locked ? "badge-showcase-item--locked" : ""}"
              role="button" tabindex="0" aria-label="${mc.title}"
              data-merit-key="${mc.key}">
           ${badgeSvg}
-        </div>
-      `;
+        </div>`;
     }).join("");
 
-    container.querySelectorAll(".badge-showcase-item").forEach((el) => {
+    // Badges secretos — só aparecem quando desbloqueados (surpresa total)
+    const unlockedSecretItems = evaluatedSecrets
+      .filter((sm) => sm.unlocked)
+      .map((sm) => `
+        <div class="badge-showcase-item badge-showcase-item--secret"
+             role="button" tabindex="0" aria-label="${sm.title}"
+             data-merit-key="${sm.key}">
+          <div class="secret-rainbow-ring">
+            ${BadgeGenerator.render(sm, { size: 130, locked: false, count: 1 })}
+          </div>
+        </div>`)
+      .join("");
+
+    const lockedCount = evaluatedSecrets.filter((sm) => !sm.unlocked).length;
+    const teaserEl = lockedCount > 0
+      ? `<div class="secret-teaser" aria-label="Há conquistas ocultas">
+           <span class="secret-teaser__icon">🔮</span>
+           <span class="secret-teaser__text">Dizem que existem conquistas secretas por aqui...</span>
+         </div>`
+      : "";
+
+    container.innerHTML = regularItems + unlockedSecretItems;
+
+    // Teaser aparece fora do grid, abaixo dele
+    const existingTeaser = document.getElementById("secret-teaser-wrap");
+    if (existingTeaser) existingTeaser.remove();
+    if (teaserEl) {
+      const wrap = document.createElement("div");
+      wrap.id = "secret-teaser-wrap";
+      wrap.innerHTML = teaserEl;
+      container.insertAdjacentElement("afterend", wrap);
+    }
+
+    container.querySelectorAll(".badge-showcase-item[data-merit-key]").forEach((el) => {
       const key = el.dataset.meritKey;
-      const mc = allMeritsConfig.find((m) => m.key === key);
+      const secretMc = evaluatedSecrets.find((sm) => sm.key === key);
+      const mc = secretMc ?? allMeritsConfig.find((m) => m.key === key);
       if (!mc) return;
-      const count = meritCounts[key] ?? 0;
+      const count = meritCounts[key] ?? (secretMc?.unlocked ? 1 : 0);
       el.addEventListener("click", () => showBadgeModal(mc, count));
       el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") showBadgeModal(mc, count); });
     });

@@ -122,11 +122,16 @@ const AdminPage = (() => {
     const merits = getAllMeritsConfig();
     let selected  = null;
 
+    const meritIcon = (mc, size = 44) => {
+      const accent = mc.badge?.borderColor || "#39d353";
+      return `<span class="merit-icon" style="--accent:${accent};width:${size}px;height:${size}px;font-size:${Math.round(size * 0.52)}px">${mc.emoji}</span>`;
+    };
+
     const renderTrigger = () => {
       if (selected) {
         return `
           <button type="button" class="merit-trigger merit-trigger--selected" id="merit-trigger" aria-haspopup="true" aria-expanded="false">
-            <span class="merit-trigger__badge">${BadgeGenerator.render(selected, { size: 56, showLabel: false })}</span>
+            ${meritIcon(selected, 48)}
             <span class="merit-trigger__info">
               <span class="merit-trigger__name">${selected.title}</span>
               <span class="merit-trigger__sub">${selected.description}</span>
@@ -147,46 +152,119 @@ const AdminPage = (() => {
           ${merits.map((mc) => `
             <button type="button" class="merit-picker-item ${selected?.key === mc.key ? "merit-picker-item--selected" : ""}"
                     data-key="${mc.key}" title="${mc.title}">
-              ${BadgeGenerator.render(mc, { size: 72, showLabel: false })}
+              ${meritIcon(mc, 52)}
               <span class="merit-picker-item__label">${mc.title}</span>
             </button>
           `).join("")}
         </div>
       </div>`;
 
+    const closeDropdown = () => {
+      document.getElementById("merit-picker-dropdown")?.remove();
+      container.querySelector("#merit-trigger")?.setAttribute("aria-expanded", "false");
+    };
+
     const rebuild = () => {
       container.innerHTML = renderTrigger();
       const trigger = container.querySelector("#merit-trigger");
       trigger.addEventListener("click", () => {
-        const open = !container.querySelector("#merit-picker-dropdown");
-        if (open) {
-          container.insertAdjacentHTML("beforeend", renderDropdown());
-          trigger.setAttribute("aria-expanded", "true");
-          container.querySelectorAll(".merit-picker-item").forEach((btn) => {
+        const alreadyOpen = !!document.getElementById("merit-picker-dropdown");
+        if (alreadyOpen) { closeDropdown(); return; }
+
+        // Monta dropdown no body para escapar de qualquer overflow pai
+        const dd = document.createElement("div");
+        dd.innerHTML = renderDropdown();
+        const ddEl = dd.firstElementChild;
+        document.body.appendChild(ddEl);
+
+        // Posiciona abaixo do trigger via fixed
+        const rect = trigger.getBoundingClientRect();
+        ddEl.style.cssText = `
+          position: fixed;
+          top: ${rect.bottom + 6}px;
+          left: ${rect.left}px;
+          width: ${rect.width}px;
+          z-index: 9000;
+        `;
+
+        trigger.setAttribute("aria-expanded", "true");
+
+        // Stagger nos itens
+        ddEl.querySelectorAll(".merit-picker-item").forEach((btn, i) => {
+          btn.style.animationDelay = `${i * 28}ms`;
+          btn.classList.add("anim-fade-up");
+        });
+        ddEl.querySelectorAll(".merit-picker-item").forEach((btn) => {
             btn.addEventListener("click", () => {
               selected = merits.find((m) => m.key === btn.dataset.key) ?? null;
               hidden.value = selected?.key ?? "";
+              closeDropdown();
               rebuild();
             });
           });
-          // Fecha ao clicar fora
+          // Fecha ao clicar fora ou ao rolar
           setTimeout(() => {
             document.addEventListener("click", function onOut(e) {
-              if (!container.contains(e.target)) {
-                container.querySelector("#merit-picker-dropdown")?.remove();
-                trigger.setAttribute("aria-expanded", "false");
+              if (!container.contains(e.target) && !ddEl.contains(e.target)) {
+                closeDropdown();
                 document.removeEventListener("click", onOut);
               }
             });
+            window.addEventListener("scroll", closeDropdown, { once: true, passive: true });
           }, 0);
-        } else {
-          container.querySelector("#merit-picker-dropdown")?.remove();
-          trigger.setAttribute("aria-expanded", "false");
-        }
       });
     };
 
     rebuild();
+  };
+
+  // ─── Motivos pré-cadastrados ──────────────────────────────
+
+  const REASON_PRESETS = [
+    "Commitou direto na main às 23h e foi pra casa",
+    "Fez um deploy na sexta às 17h59 sorrindo",
+    "Resolveu o bug com um console.log e nunca removeu",
+    "Culpou o cache antes de investigar qualquer coisa",
+    "Abriu um PR com 2.400 linhas sem avisar ninguém",
+    "Descobriu o bug em produção antes do usuário (por sorte)",
+    "Escreveu um comentário TODO em 2019 que ainda existe",
+    "Fez um SELECT * em produção sem WHERE",
+    "Passou 3 horas num bug que era ponto e vírgula",
+    "Reescreveu tudo do zero porque não entendeu o código antigo",
+    "Colocou credencial hardcoded e commitou no repositório público",
+    "Disse 'funciona na minha máquina' com confiança total",
+    "Fechou o ticket sem reproduzir o bug",
+    "Mandou a solução do Stack Overflow sem ler o que fazia",
+    "Usou IA pra escrever o código e nem testou",
+    "Fez merge do próprio PR depois de 2 minutos",
+    "Deletou a branch antes do deploy terminar",
+  ];
+
+  const renderReasonPresets = (containerId, inputId) => {
+    const container = document.getElementById(containerId);
+    const input     = document.getElementById(inputId);
+    if (!container || !input) return;
+
+    // Embaralha e pega 6 sugestões aleatórias
+    const shuffled = [...REASON_PRESETS].sort(() => Math.random() - 0.5).slice(0, 6);
+
+    container.innerHTML = shuffled.map((r) =>
+      `<button type="button" class="reason-preset" data-reason="${r}">${r}</button>`
+    ).join("");
+
+    container.querySelectorAll(".reason-preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        input.value = btn.dataset.reason;
+        container.querySelectorAll(".reason-preset").forEach((b) => b.classList.remove("reason-preset--active"));
+        btn.classList.add("reason-preset--active");
+        input.focus();
+      });
+    });
+
+    // Remove destaque quando o usuário edita manualmente
+    input.addEventListener("input", () => {
+      container.querySelectorAll(".reason-preset").forEach((b) => b.classList.remove("reason-preset--active"));
+    });
   };
 
   // ─── Emoji Picker ─────────────────────────────────────────
@@ -395,13 +473,14 @@ const AdminPage = (() => {
 
     populateMemberSelect("grant-member");
     renderMeritPicker("merit-picker", "grant-merit");
+    renderReasonPresets("reason-presets", "grant-reason");
 
     const currentUser = Auth.getCurrentUser();
     const giverDisplay = document.getElementById("grant-giver-display");
     if (giverDisplay && currentUser) {
       giverDisplay.innerHTML = `
-        <span class="giver-display__avatar">${currentUser.avatar}</span>
-        <span class="giver-display__name">${currentUser.name}</span>`;
+        <span class="giver-chip__avatar">${currentUser.avatar}</span>
+        <span class="giver-chip__name">${currentUser.name}</span>`;
     }
 
     const form = document.getElementById("grant-form");

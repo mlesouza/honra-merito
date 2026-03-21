@@ -14,7 +14,22 @@ const Celebration = (() => {
     "Seu legado está garantido.",
     "Uma conquista memorável!",
     "Isso vai pro currículo? Perguntando por alguém.",
-    "Parabéns! Ou sentimos muito. Depende do mérito."
+    "Parabéns! Ou sentimos muito. Depende do mérito.",
+    "O Git nunca mente. E agora o sistema também não.",
+    "Impressionante. Negativamente ou positivamente, você decide.",
+    "Que façanha. Vamos torcer para não se repetir.",
+    "Seu nome ficará marcado... no banco de dados.",
+    "Digno de uma cerimônia. Infelizmente essa é ela.",
+    "Você fez história. Ou um incidente. Talvez os dois.",
+    "A equipe lembra. A equipe sempre lembra.",
+    "Parabéns por ser você mesmo, para o bem ou para o mal.",
+    "Encaminhado para a memória coletiva do time.",
+    "Uma façanha tão marcante que precisou de um badge.",
+    "Ninguém acreditou que era possível. Aqui estamos.",
+    "Isso não vai aparecer na sua revisão de desempenho. Provavelmente.",
+    "Arquivado eternamente. Sem direito a expurgo.",
+    "Você fez o que ninguém quis fazer. Ou deveria fazer.",
+    "O badge é pequeno. A lenda é grande.",
   ];
 
   let confettiCanvas = null;

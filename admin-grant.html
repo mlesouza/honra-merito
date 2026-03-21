@@ -49,43 +49,50 @@
     <div class="card card--narrow">
       <form id="grant-form" novalidate>
 
-        <div class="form-group">
-          <label for="grant-member" class="form-label">Quem está recebendo? <span class="required" aria-hidden="true">*</span></label>
+        <div class="grant-step">
+          <div class="grant-step__header">
+            <span class="grant-step__num">1</span>
+            <label for="grant-member" class="grant-step__label">Quem está recebendo? <span class="required" aria-hidden="true">*</span></label>
+          </div>
           <select id="grant-member" name="member" class="form-select" required aria-required="true">
             <option value="">Selecione um membro...</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Qual mérito? <span class="required" aria-hidden="true">*</span></label>
+        <div class="grant-step">
+          <div class="grant-step__header">
+            <span class="grant-step__num">2</span>
+            <span class="grant-step__label">Qual mérito? <span class="required" aria-hidden="true">*</span></span>
+          </div>
           <input type="hidden" id="grant-merit" name="merit" required />
           <div id="merit-picker" class="merit-picker"></div>
         </div>
 
-        <div class="form-group">
-          <label for="grant-reason" class="form-label">Motivo <span class="text-muted">(opcional)</span></label>
+        <div class="grant-step">
+          <div class="grant-step__header">
+            <span class="grant-step__num">3</span>
+            <label for="grant-reason" class="grant-step__label">Motivo <span class="grant-step__optional">(opcional)</span></label>
+          </div>
+          <div class="reason-presets" id="reason-presets" aria-label="Sugestões de motivo"></div>
           <input
             type="text"
             id="grant-reason"
             name="reason"
             class="form-input"
-            placeholder="Ex: Commitou direto na main às 23h e foi pra casa..."
+            placeholder="Ou escreva o seu próprio motivo..."
             maxlength="300"
-            aria-describedby="grant-reason-hint"
           />
-          <span id="grant-reason-hint" class="form-hint">Máximo 300 caracteres</span>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Dado por</label>
-          <div id="grant-giver-display" class="giver-display" aria-live="polite"></div>
         </div>
 
         <div id="grant-status" class="status-message" hidden aria-live="polite"></div>
 
-        <button type="submit" class="btn btn--primary btn--full">
-          Dar Mérito 🏅
-        </button>
+        <div class="grant-footer">
+          <div id="grant-giver-display" class="giver-chip" aria-live="polite"></div>
+          <button type="submit" class="btn btn--primary btn--full">
+            Dar Mérito 🏅
+          </button>
+        </div>
+
       </form>
     </div>
   </main>

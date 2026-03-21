@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Read(//Users/marcelosouza/Documents/LINX/ui-ux-pro-max-skill/**)"
+      "Read(//Users/marcelosouza/Documents/LINX/ui-ux-pro-max-skill/**)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/profile.js)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/admin.js)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/config.js)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/celebration.js)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/app.js)",
+      "Bash(node --check /Users/marcelosouza/Documents/LINX/honra-merito/js/badge-generator.js)"
     ]
   }
 }

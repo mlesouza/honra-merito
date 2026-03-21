@@ -1374,6 +1374,66 @@ img, svg { display: block; max-width: 100%; }
   gap: var(--space-8);
 }
 
+/* Badge secreto — desbloqueado */
+.badge-showcase-item--secret {
+  position: relative;
+}
+.badge-showcase-item--secret:hover {
+  transform: translateY(-8px) scale(1.08) !important;
+}
+
+/* Wrapper que cria a borda rainbow girando */
+.secret-rainbow-ring {
+  position: relative;
+  padding: 3px;
+  border-radius: 10px;
+  overflow: hidden;
+  filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+}
+/* Gradiente enorme girando dentro do wrapper — overflow:hidden recorta na borda */
+.secret-rainbow-ring::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    #ffd700, #ff6b35, #ff2d78, #bd93f9, #4f8bff, #39d353, #ffd700
+  );
+  animation: rainbow-spin 2.5s linear infinite;
+  z-index: 0;
+}
+.secret-rainbow-ring svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+@keyframes rainbow-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Teaser de conquistas secretas — exibido abaixo do showcase */
+.secret-teaser {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-5);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-full);
+  width: fit-content;
+  margin-inline: auto;
+  opacity: 0.55;
+}
+.secret-teaser__icon {
+  font-size: 1.1rem;
+}
+.secret-teaser__text {
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .badge-showcase-item {
   display: flex;
   flex-direction: column;
@@ -1553,19 +1613,109 @@ img, svg { display: block; max-width: 100%; }
 .form-hint { color: var(--text-muted); font-size: 0.75rem; }
 .required { color: var(--red); }
 
-/* Giver display */
-.giver-display {
+/* Motivos pré-cadastrados */
+.reason-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.reason-preset {
+  font-size: 0.72rem;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform 0.15s ease;
+  text-align: left;
+  line-height: 1.4;
+}
+.reason-preset:hover {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+}
+.reason-preset--active {
+  background: var(--primary-dim);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* ============================================================
+   GRANT FORM — steps numerados
+   ============================================================ */
+
+.grant-step {
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--border);
+}
+.grant-step:last-of-type {
+  border-bottom: none;
+  padding-bottom: var(--space-2);
+}
+.grant-step__header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.grant-step__num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary-dim);
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--primary);
+}
+.grant-step__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.grant-step__optional {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.grant-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-2);
+}
+
+/* Chip do "dado por" no footer */
+.giver-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   background: var(--surface-2);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  font-size: 0.9rem;
+  border-radius: var(--radius-full);
+  padding: 5px 12px 5px 6px;
+  font-size: 0.82rem;
   font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.giver-display__avatar { font-size: 1.2rem; }
+.giver-chip__avatar { font-size: 1.1rem; line-height: 1; }
+.giver-chip__name { color: var(--text); }
+
 
 /* ============================================================
    BOTÕES
@@ -1692,7 +1842,7 @@ a.btn:hover { text-decoration: none; }
 #auth-modal {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1968,6 +2118,83 @@ a.btn:hover { text-decoration: none; }
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Entrada de cards — só anima quando o pai já está visível (não usa hidden) */
+#page-content .card,
+#page-content .card--narrow,
+#admin-content .card,
+#admin-content .card--narrow {
+  animation: fade-up 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Page hero */
+#page-content .page-hero,
+#admin-content .page-hero {
+  animation: fade-up 0.35s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+/* Grant steps — stagger */
+.grant-step:nth-child(1) { animation: fade-up 0.35s 0.05s cubic-bezier(0.16,1,0.3,1) both; }
+.grant-step:nth-child(2) { animation: fade-up 0.35s 0.12s cubic-bezier(0.16,1,0.3,1) both; }
+.grant-step:nth-child(3) { animation: fade-up 0.35s 0.19s cubic-bezier(0.16,1,0.3,1) both; }
+.grant-footer           { animation: fade-up 0.35s 0.26s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* Badge showcase — stagger via nth-child */
+.badge-showcase-item:nth-child(1)  { animation: scale-in 0.35s 0.04s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(2)  { animation: scale-in 0.35s 0.08s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(3)  { animation: scale-in 0.35s 0.12s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(4)  { animation: scale-in 0.35s 0.16s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(5)  { animation: scale-in 0.35s 0.20s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(6)  { animation: scale-in 0.35s 0.24s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(7)  { animation: scale-in 0.35s 0.28s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(8)  { animation: scale-in 0.35s 0.32s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(9)  { animation: scale-in 0.35s 0.36s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(10) { animation: scale-in 0.35s 0.40s cubic-bezier(0.34,1.56,0.64,1) both; }
+.badge-showcase-item:nth-child(n+11) { animation: scale-in 0.35s 0.44s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* Hover com spring */
+.badge-showcase-item {
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), filter 0.25s ease;
+}
+.badge-showcase-item:hover {
+  transform: translateY(-6px) scale(1.06);
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.45));
+}
+
+/* Stat cards — slide-in stagger */
+.profile-stat:nth-child(1) { animation: slide-in-right 0.3s 0.05s cubic-bezier(0.16,1,0.3,1) both; }
+.profile-stat:nth-child(2) { animation: slide-in-right 0.3s 0.10s cubic-bezier(0.16,1,0.3,1) both; }
+.profile-stat:nth-child(3) { animation: slide-in-right 0.3s 0.15s cubic-bezier(0.16,1,0.3,1) both; }
+.profile-stat:nth-child(4) { animation: slide-in-right 0.3s 0.20s cubic-bezier(0.16,1,0.3,1) both; }
+.profile-stat:nth-child(5) { animation: slide-in-right 0.3s 0.25s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* Botão primary — pulse sutil no hover */
+.btn--primary {
+  transition: background var(--transition), color var(--transition), border-color var(--transition),
+              transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--primary-dim);
+}
+.btn--primary:active {
+  transform: translateY(0);
+}
+
+/* Input focus — glow suave */
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  transition: border-color var(--transition-md), box-shadow 0.2s cubic-bezier(0.16,1,0.3,1);
 }
 @keyframes fade-in {
   from { opacity: 0; }
@@ -2566,19 +2793,31 @@ a.btn:hover { text-decoration: none; }
   flex-shrink: 0;
 }
 
+/* Ícone emoji usado no picker e no trigger */
+.merit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface-3));
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
 .merit-picker-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35);
   padding: var(--space-4);
-  z-index: 300;
   max-height: 340px;
   overflow-y: auto;
+  animation: dropdown-in 0.18s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
 .merit-picker-grid {
@@ -2618,6 +2857,10 @@ a.btn:hover { text-decoration: none; }
   text-overflow: ellipsis;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+.merit-picker-item--selected .merit-icon {
+  box-shadow: 0 0 0 3px var(--primary-dim);
 }
 
 /* ============================================================
