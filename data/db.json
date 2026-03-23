@@ -12,5 +12,15 @@
   ],
   "members": [],
   "customMerits": [],
-  "merits": []
+  "merits": [
+    {
+      "id": "ba4ec5f4-5d3a-45f9-b0ee-a5325c25b50f",
+      "recipientId": "tanaka",
+      "meritKey": "works_on_my_machine",
+      "givenBy": "Tanaka",
+      "givenById": "tanaka",
+      "reason": null,
+      "timestamp": "2026-03-23T14:07:38.901Z"
+    }
+  ]
 }
