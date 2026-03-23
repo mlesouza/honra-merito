@@ -55,15 +55,6 @@
       "timestamp": "2026-03-21T11:36:10.214Z"
     },
     {
-      "id": "b1f98ec5-c1c1-4a41-888f-00fc7d58937d",
-      "recipientId": "marcelo",
-      "meritKey": "commitador_sexta",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T11:40:21.554Z"
-    },
-    {
       "id": "8b4a5a45-16c4-46c1-b28d-152e8440c8fb",
       "recipientId": "pedro",
       "meritKey": "ninja_das_tarefas",
