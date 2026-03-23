@@ -154,15 +154,6 @@
       "timestamp": "2026-03-21T11:55:46.528Z"
     },
     {
-      "id": "a113f9b2-f14b-413c-aaf1-023ddb65fd56",
-      "recipientId": "marcelo",
-      "meritKey": "sobrevivente_mysql",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T11:56:06.196Z"
-    },
-    {
       "id": "c1d42ce5-9228-41fc-9c16-23078c693683",
       "recipientId": "marcelo",
       "meritKey": "o_rei_das_desculpas",
