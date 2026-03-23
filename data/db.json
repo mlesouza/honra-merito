@@ -37,15 +37,6 @@
       "timestamp": "2026-03-21T11:34:54.873Z"
     },
     {
-      "id": "c2960fc3-ae7d-462f-8580-08e85119c12a",
-      "recipientId": "victor",
-      "meritKey": "ctrl_c_ctrl_v",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T11:35:09.499Z"
-    },
-    {
       "id": "160025da-ef90-40a4-813a-67bd11e05949",
       "recipientId": "tanaka",
       "meritKey": "ninja_das_tarefas",
