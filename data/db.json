@@ -91,15 +91,6 @@
       "timestamp": "2026-03-21T11:40:38.778Z"
     },
     {
-      "id": "caa5bdf4-aa5d-44ab-a51d-2317e22459db",
-      "recipientId": "marcelo",
-      "meritKey": "commitador_sexta",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T11:42:17.367Z"
-    },
-    {
       "id": "b5270aca-f744-49a4-b990-a04328276875",
       "recipientId": "marcelo",
       "meritKey": "testador_producao",
