@@ -21,6 +21,15 @@
       "givenById": "tanaka",
       "reason": null,
       "timestamp": "2026-03-23T14:07:38.901Z"
+    },
+    {
+      "id": "45ce191c-147e-4562-ac92-fb31dedfaee0",
+      "recipientId": "tanaka",
+      "meritKey": "sobrevivente_mysql",
+      "givenBy": "Tanaka",
+      "givenById": "tanaka",
+      "reason": null,
+      "timestamp": "2026-03-23T14:07:55.698Z"
     }
   ]
 }
