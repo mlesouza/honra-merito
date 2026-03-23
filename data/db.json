@@ -10,15 +10,6 @@
   "customMerits": [],
   "merits": [
     {
-      "id": "c48475c6-2588-46d1-9220-d429373cfce9",
-      "recipientId": "su",
-      "meritKey": "gdd",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T06:13:48.227Z"
-    },
-    {
       "id": "160025da-ef90-40a4-813a-67bd11e05949",
       "recipientId": "tanaka",
       "meritKey": "ninja_das_tarefas",
