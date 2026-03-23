@@ -224,15 +224,6 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-21T12:14:52.766Z"
-    },
-    {
-      "id": "a14c8ad3-0202-479b-9963-c35d31092097",
-      "recipientId": "marcelo",
-      "meritKey": "ta_valendo_nada",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-21T12:17:48.996Z"
     }
   ]
 }
