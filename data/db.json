@@ -91,15 +91,6 @@
       "timestamp": "2026-03-21T11:40:38.778Z"
     },
     {
-      "id": "b5270aca-f744-49a4-b990-a04328276875",
-      "recipientId": "marcelo",
-      "meritKey": "testador_producao",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": "Colocou credencial hardcoded e commitou no repositório público",
-      "timestamp": "2026-03-21T11:44:52.237Z"
-    },
-    {
       "id": "8b4a5a45-16c4-46c1-b28d-152e8440c8fb",
       "recipientId": "pedro",
       "meritKey": "ninja_das_tarefas",
