@@ -127,15 +127,6 @@
       "timestamp": "2026-03-21T11:48:09.772Z"
     },
     {
-      "id": "7ebba64a-e8fd-4911-a9fb-40104612e57f",
-      "recipientId": "marcelo",
-      "meritKey": "works_on_my_machine",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": "Passou 3 horas num bug que era ponto e vírgula",
-      "timestamp": "2026-03-21T11:55:09.709Z"
-    },
-    {
       "id": "c1d42ce5-9228-41fc-9c16-23078c693683",
       "recipientId": "marcelo",
       "meritKey": "o_rei_das_desculpas",
