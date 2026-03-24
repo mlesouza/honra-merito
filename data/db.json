@@ -34,15 +34,6 @@
       "givenById": "tanaka",
       "reason": null,
       "timestamp": "2026-03-23T14:07:55.698Z"
-    },
-    {
-      "id": "052c81e9-c50c-4cb1-bf28-4c71937f6591",
-      "recipientId": "tanaka",
-      "meritKey": "inimigo_qa",
-      "givenBy": "Marcelo",
-      "givenById": "marcelo",
-      "reason": null,
-      "timestamp": "2026-03-23T17:54:43.365Z"
     }
   ]
 }
