@@ -8,6 +8,10 @@
     {
       "memberId": "tanaka",
       "passwordHash": "e440bf9a5207bc8bc8f84099d783b5afbc99ea00c1eaa87884cfab4d7bf64ad8"
+    },
+    {
+      "memberId": "arthur",
+      "passwordHash": "9113b98df80f877c7a2ee5d865a04c9514b4e9bf25a49d315b0b15f115d2f0d2"
     }
   ],
   "members": [],
