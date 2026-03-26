@@ -12,6 +12,10 @@
     {
       "memberId": "arthur",
       "passwordHash": "9113b98df80f877c7a2ee5d865a04c9514b4e9bf25a49d315b0b15f115d2f0d2"
+    },
+    {
+      "memberId": "calvin",
+      "passwordHash": "47519d6c8a3110dc13dd22ce9ddab08a3cc4986598fb9b419eaa442c8b3720c8"
     }
   ],
   "members": [],
