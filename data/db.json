@@ -38,6 +38,15 @@
       "givenById": "tanaka",
       "reason": null,
       "timestamp": "2026-03-23T14:07:55.698Z"
+    },
+    {
+      "id": "a78d0c89-5004-415f-814c-f8cc1ef21f0c",
+      "recipientId": "su",
+      "meritKey": "testador_producao",
+      "givenBy": "Calvin",
+      "givenById": "calvin",
+      "reason": "Todo deploy ele precisa fazer fix em prd",
+      "timestamp": "2026-03-26T13:34:57.685Z"
     }
   ]
 }
