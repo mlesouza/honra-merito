@@ -79,6 +79,15 @@
       "givenById": "marcelo",
       "reason": null,
       "timestamp": "2026-03-27T17:50:33.302Z"
+    },
+    {
+      "id": "2a210598-9973-48c9-8178-4c8dd7ed14a5",
+      "recipientId": "su",
+      "meritKey": "mansplaining",
+      "givenBy": "Marcelo",
+      "givenById": "marcelo",
+      "reason": null,
+      "timestamp": "2026-03-30T17:23:01.536Z"
     }
   ]
 }
