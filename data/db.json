@@ -19,7 +19,21 @@
     }
   ],
   "members": [],
-  "customMerits": [],
+  "customMerits": [
+    {
+      "key": "mansplaining",
+      "emoji": "☠️",
+      "title": "Mansplaining",
+      "description": "Mérito especial para o SU",
+      "badge": {
+        "backgroundColor": "#11040a",
+        "borderColor": "#f43f8e",
+        "textColor": "#e6edf3",
+        "shape": "hexagon"
+      },
+      "createdAt": "2026-03-30T17:22:17.686Z"
+    }
+  ],
   "merits": [
     {
       "id": "ba4ec5f4-5d3a-45f9-b0ee-a5325c25b50f",
